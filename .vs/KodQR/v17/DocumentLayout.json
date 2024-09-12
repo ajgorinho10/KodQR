@@ -1,0 +1,91 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kowal\\source\\repos\\KodQR\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\source\\repos\\kodqr\\kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\source\\repos\\kodqr\\kodqr\\grouping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\grouping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\source\\repos\\kodqr\\kodqr\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\source\\repos\\kodqr\\kodqr\\findpatterns.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\findpatterns.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "QuietZone.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\QuietZone.cs",
+              "RelativeDocumentMoniker": "KodQR\\QuietZone.cs",
+              "ToolTip": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\QuietZone.cs",
+              "RelativeToolTip": "KodQR\\QuietZone.cs",
+              "ViewState": "AQIAAAkAAAAAAAAAAAAAADUAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T11:39:44.56Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Grouping.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\Grouping.cs",
+              "RelativeDocumentMoniker": "KodQR\\Grouping.cs",
+              "ToolTip": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\Grouping.cs",
+              "RelativeToolTip": "KodQR\\Grouping.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAC4AAACWAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T11:30:17.037Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "FindPatterns.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\FindPatterns.cs",
+              "RelativeDocumentMoniker": "KodQR\\FindPatterns.cs",
+              "ToolTip": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\FindPatterns.cs",
+              "RelativeToolTip": "KodQR\\FindPatterns.cs",
+              "ViewState": "AQIAAMYAAAAAAAAAAAAAAOoAAAAZAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-09-05T11:01:45.737Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\Program.cs",
+              "RelativeDocumentMoniker": "KodQR\\Program.cs",
+              "ToolTip": "C:\\Users\\kowal\\source\\repos\\KodQR\\KodQR\\Program.cs",
+              "RelativeToolTip": "KodQR\\Program.cs",
+              "ViewState": "AQIAACsAAAAAAAAAAAAiwD8AAAAmAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-19T06:48:32.752Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
