@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KodQR": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

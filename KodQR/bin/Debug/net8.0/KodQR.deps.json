@@ -13,9 +13,11 @@
           "Emgu.CV": "4.9.0.5494",
           "Emgu.CV.runtime.windows": "4.9.0.5494",
           "ImageProcessor.Core.CoreCompat": "1.3.0",
+          "OpenCV": "2.4.11",
           "OpenCvSharp3-AnyCPU": "4.0.0.20181129",
           "OpenCvSharp4": "4.10.0.20240616",
           "OpenCvSharp4.Extensions": "4.10.0.20240616",
+          "OpenCvSharp4.Windows": "4.10.0.20240616",
           "OpenCvSharp4.runtime.win": "4.10.0.20240616",
           "SixLabors.ImageSharp": "3.1.5",
           "SixLabors.ImageSharp.Drawing": "2.1.4",
@@ -302,6 +304,7 @@
           }
         }
       },
+      "OpenCV/2.4.11": {},
       "OpenCvSharp3-AnyCPU/4.0.0.20181129": {
         "dependencies": {
           "System.Drawing.Common": "8.0.8"
@@ -377,6 +380,12 @@
             "assetType": "native",
             "fileVersion": "2024.5.0.0"
           }
+        }
+      },
+      "OpenCvSharp4.Windows/4.10.0.20240616": {
+        "dependencies": {
+          "OpenCvSharp4": "4.10.0.20240616",
+          "OpenCvSharp4.runtime.win": "4.10.0.20240616"
         }
       },
       "runtime.native.System/4.3.0": {
@@ -703,6 +712,13 @@
       "path": "microsoft.win32.systemevents/8.0.0",
       "hashPath": "microsoft.win32.systemevents.8.0.0.nupkg.sha512"
     },
+    "OpenCV/2.4.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1W5nlWqWx82FI6q6ISqLUj3paH5DpbfXqnNrFi9eOCeChr59I0d0xklDtMMNsGt8JLlZTMu6IW2Pyp7IMnGVAA==",
+      "path": "opencv/2.4.11",
+      "hashPath": "opencv.2.4.11.nupkg.sha512"
+    },
     "OpenCvSharp3-AnyCPU/4.0.0.20181129": {
       "type": "package",
       "serviceable": true,
@@ -730,6 +746,13 @@
       "sha512": "sha512-dpQNIR6PpeB/oZM0e0fZpt9lOS3Htjm6ZjtOgLyxN7QwjRekbNevrmO8VbgezUoetk68CRwxYZGaymCm2vt8Sg==",
       "path": "opencvsharp4.runtime.win/4.10.0.20240616",
       "hashPath": "opencvsharp4.runtime.win.4.10.0.20240616.nupkg.sha512"
+    },
+    "OpenCvSharp4.Windows/4.10.0.20240616": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8xaW5lhiRu4jQE4qcCGeD29gBmfxfVwS2QZhgGih/HytXlqAHSMKmVrEbmCcVgrDKkC4weePZETNuamEiBvm8w==",
+      "path": "opencvsharp4.windows/4.10.0.20240616",
+      "hashPath": "opencvsharp4.windows.4.10.0.20240616.nupkg.sha512"
     },
     "runtime.native.System/4.3.0": {
       "type": "package",

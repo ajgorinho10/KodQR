@@ -1,56 +1,21 @@
 ﻿using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text.Json;
-using OpenCvSharp;
-using OpenCvSharp.Extensions;
-using Emgu.CV.Structure;
-using System.Runtime.CompilerServices;
-using System.Collections.Concurrent;
-using ImageProcessor.Core.Processors;
 using KodQR;
-using Emgu.CV.Stitching;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.CV.Structure;
 using static FindPatterns;
+using SixLabors.ImageSharp.Drawing.Processing;
+using System.Drawing;
+using System.Collections.Concurrent;
 
 public class QRCodeReader
 {
-    public struct Punkt
-    {
-        public Punkt(int x, int y, double w,double mw)
-        {
-            this.X = x;
-            this.Y = y;
-            this.w = w;
-            this.MW = mw;
-        }
-        public int X;
-        public int Y;
-        public double w;
-        public double MW;
-
-        public override string ToString()
-        {
-            return $"(X == {X}, Y == {Y} W == {w})";
-        }
-
-        public static implicit operator System.Drawing.Point(Punkt p)
-        {
-            return new System.Drawing.Point(p.X, p.Y);
-        }
-
-        public static implicit operator System.Drawing.PointF(Punkt p)
-        {
-            return new PointF(p.X, p.Y);
-        }
-    }
 
     static void Main(string[] args)
     {
         //string filePath = "zyczenia-sensonauka.png";
         //string filePath = "qr-code-21x21.png";
-        //string filePath = "qr7.png";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr7.png";
         //string filePath = "qr6.png";
         //string filePath = "rq3.png";
         //string filePath = "qr-1.png";
@@ -58,81 +23,155 @@ public class QRCodeReader
         //string filePath = "qrmax.png";
         //string filePath = "qrkat.png";
         //string filePath = "qrmid.png";
-        //string filePath = "qrtest1.png";
         //string filePath = "qr1_2.png";
-        //string filePath = "qr1_3.png";
-        string filePath = "qr1_4.png";
-        //string filePath = "qr1_5.png";
-        //string filePath = "qrtest2.png";
-        //string filePath = "qrciekawy.png"; //wazne
-        //string filePath = "dziwne.png";
-        //string filePath = "test.png";
+        string filePath = "qrciekawy.png";
         //
+        //string filePath = "qrehh.jpg";
+        //string filePath = "test.png";
+        //string filePath = "test1.png";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr_moj.png";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr12.jpg";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
         //string outputFilePath = "output.png";
 
-        Bitmap binary = Binarization.Binarize(filePath);
-        List<RegionDescriptors> finderPatterns = FindPatterns.FindFinderPatterns(binary);
-        List<Tuple<RegionDescriptors, RegionDescriptors, RegionDescriptors>> Grouped = Grouping.FindQRCodeCandidates(binary,finderPatterns, 0, binary.Width*2, 45,65);
-        Console.WriteLine("Grouped Count:"+Grouped.Count);
-        Grouped = QRCodeReader.checkGrouped(Grouped, binary);
+        DateTime startTime = DateTime.Now;
 
-        QRCodeReader.PrintandDraw(finderPatterns, binary);
-        QRCodeReader.PrintandDrawGrouped(Grouped, binary);
 
-        binary.Save("output.png", ImageFormat.Png);
+        Image<Gray, Byte> img = Binarization.Binarize(filePath);
+        FindPatterns findPatterns = new FindPatterns(img);
 
-        Process.Start(new ProcessStartInfo("output.png") { UseShellExecute = true });
+        List<Punkt> finderPatterns = findPatterns.FinderPatterns();
+        Console.WriteLine($"Ilosc punktow(bez grupowania): {finderPatterns.Count}");
+
+        List<Tuple<Punkt, Punkt, Punkt>> grouped = Grouping.FindQRCodeCandidates(finderPatterns, img.Cols * 2);
+        Console.WriteLine($"Ilosc Grup(z grupowaniem): {grouped.Count}");
+
+        List<Tuple<Punkt, Punkt, Punkt>> groupedQuiet = quietCheck(grouped,img);
+        Console.WriteLine($"Ilosc QRKodów(z QuietZone): {groupedQuiet.Count}");
+
+
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime - startTime;
+        Console.WriteLine($"Czas wykonania: {duration.TotalMilliseconds} ms");
+
+
+
+        drawInfo(img, groupedQuiet, finderPatterns);
     }
 
-    static List<Tuple<RegionDescriptors, RegionDescriptors, RegionDescriptors>> checkGrouped(List<Tuple<RegionDescriptors, RegionDescriptors, RegionDescriptors>> Grouped,Bitmap binary)
+    public static List<Tuple<Punkt, Punkt, Punkt>> quietCheck(List<Tuple<Punkt, Punkt, Punkt>> grouped, Image<Gray, Byte> image)
     {
-        List < Tuple <RegionDescriptors, RegionDescriptors, RegionDescriptors>> validGrouped = new List<Tuple<RegionDescriptors, RegionDescriptors, RegionDescriptors>>();
-        foreach (var p in Grouped)
-        {
-            QuietZone verifier = new QuietZone(binary);
-            bool quietZoneValid = verifier.VerifyQuietZone(p.Item1, p.Item2, p.Item3);
-            //Console.WriteLine($"{quietZoneValid} {timingPatternValid}");
-            if(quietZoneValid)
+        ConcurrentBag<Tuple<Punkt, Punkt, Punkt>> final = new ConcurrentBag<Tuple<Punkt, Punkt, Punkt>>();
+        ConcurrentBag<Tuple<Point, Point, Point>> list = new ConcurrentBag<Tuple<Point, Point, Point>>();
+
+         Parallel.ForEach(grouped, punkty => {
+             QuietZone q = new QuietZone(image);
+             if (q.VerifyQuietZone(punkty.Item1, punkty.Item2, punkty.Item3))
             {
-                validGrouped.Add(p);
+                final.Add(punkty);
+                list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
+            }
+             //list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
+         });
+        final = Grouping.Filtrowanie(final);
+        if (true)
+        {
+            foreach (var punkty in list)
+            {
+                //Console.WriteLine($"Quite Zone: ({punkty.Item1.X}; {punkty.Item1.Y}), ({punkty.Item2.X}; {punkty.Item2.Y}), ({punkty.Item3.X}; {punkty.Item3.Y})");
+                MCvScalar color = new MCvScalar(0, 255, 0);
+                CvInvoke.Line(
+                    image,
+                    new System.Drawing.Point(punkty.Item1.X, punkty.Item1.Y),
+                    new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
+                    color,
+                    1
+                    );
+
+                CvInvoke.Line(
+                    image,
+                    new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
+                    new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
+                    color,
+                    1
+                    );
+
+                CvInvoke.Line(
+                    image,
+                    new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
+                    new System.Drawing.Point(punkty.Item1.X, punkty.Item1.Y),
+                    color,
+                    1
+                    );
+                CvInvoke.Imshow("Obraz z punktem", image);
             }
         }
 
-        return validGrouped;
+        return new List<Tuple<Punkt, Punkt, Punkt>>(final);
     }
 
-    static void PrintandDraw(List<RegionDescriptors> finderPatterns,Bitmap binary)
+    public static void drawInfo(Image<Gray, Byte> image, List<Tuple<Punkt, Punkt, Punkt>> grouped, List<Punkt> finderPatterns)
     {
-        using (Graphics g = Graphics.FromImage(binary))
-        {
-            int j = 1;
-            foreach (var p in finderPatterns)
-            {
-                g.DrawRectangle(Pens.Blue, p.BoundingBox.X, p.BoundingBox.Y , p.BoundingBox.Width - p.BoundingBox.X, p.BoundingBox.Height - p.BoundingBox.Y);
-                Console.WriteLine($"{j} Finder Pattern at: {p.Centroid.ToString()}");
-                j++;
-            }
-        }
-        Console.WriteLine();
+        Image<Bgr, Byte> img = image.Convert<Bgr, Byte>();
+        DrawPatterns(img, finderPatterns);
+        DrawGroupedPatterns(img, grouped);
+
+        if (img.Width > 1200 || img.Height > 1200) CvInvoke.Resize(img, img, new System.Drawing.Size(), 0.5, 0.5, Inter.Linear);
+        CvInvoke.Imshow("Obraz z punktem", img);
+        CvInvoke.WaitKey(0);
     }
 
-    static void PrintandDrawGrouped(List<Tuple<RegionDescriptors, RegionDescriptors, RegionDescriptors>> Grouped,Bitmap binary)
+    public static void DrawPatterns(Image<Bgr, Byte> img, List<Punkt> patterns)
     {
-        using (Graphics g = Graphics.FromImage(binary))
+        MCvScalar color = new MCvScalar(255, 0, 255);
+        foreach (Punkt punkt in patterns)
         {
-            int j = 1;
-            foreach (var p in Grouped)
-            {
-                g.DrawLine(Pens.Red, (PointF)p.Item1.Centroid, (PointF)p.Item2.Centroid);
-                g.DrawLine(Pens.Red, (PointF)p.Item1.Centroid, (PointF)p.Item3.Centroid);
-                g.DrawLine(Pens.Red, (PointF)p.Item2.Centroid, (PointF)p.Item3.Centroid);
-                Console.WriteLine($" Pattern NR:{j}");
-                Console.WriteLine($"P NR:{j} Finder Pattern at: {p.Item1.Centroid.ToString()}");
-                Console.WriteLine($"P NR:{j} Finder Pattern at: {p.Item2.Centroid.ToString()}");
-                Console.WriteLine($"P NR:{j} Finder Pattern at: {p.Item3.Centroid.ToString()}");
-                j++;
-            }
+            //Console.WriteLine($"Pattern: {punkt.X}, {punkt.Y}");
+            CvInvoke.Circle(
+            img,               
+            new System.Drawing.Point(punkt.X, punkt.Y),
+            5,                   
+            color,               
+            -1
+            );
         }
-
     }
+
+    public static void DrawGroupedPatterns(Image<Bgr, Byte> img, List<Tuple<Punkt, Punkt, Punkt>> grouped)
+    {
+        MCvScalar color = new MCvScalar(0, 0, 255);
+        foreach (var punkty in grouped)
+        {
+            Console.WriteLine($"NEXT GROUP:");
+            Console.WriteLine($"Pattern 1: {punkty.Item1.X}, {punkty.Item1.Y}");
+            Console.WriteLine($"Pattern 2: {punkty.Item2.X}, {punkty.Item2.Y}");
+            Console.WriteLine($"Pattern 3: {punkty.Item3.X}, {punkty.Item3.Y}");
+
+            CvInvoke.Line(
+                img,
+                new System.Drawing.Point(punkty.Item1.X,  punkty.Item1.Y),
+                new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
+                color,
+                1
+                );
+
+            CvInvoke.Line(
+                img,
+                new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
+                new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
+                color,
+                1
+                );
+
+            CvInvoke.Line(
+                img,
+                new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
+                new System.Drawing.Point(punkty.Item1.X, punkty.Item1.Y),
+                color,
+                1
+                );
+        }
+    }
+
 }
