@@ -190,14 +190,14 @@ public class FindPatterns
 
         ConcurrentBag<Punkt> patterns_final = new ConcurrentBag<Punkt>();
 
-        //Parallel.ForEach(patterns_vertical, p => {
-        // VerifyFinderPatternRegions(p, patterns_final);
-        //});
+        Parallel.ForEach(patterns_vertical, p => {
+         VerifyFinderPatternRegions(p, patterns_final);
+        });
 
-        foreach (Punkt pattern in patterns_vertical)
-        {
-            VerifyFinderPatternRegions(pattern, patterns_final);
-        }
+        //foreach (Punkt pattern in patterns_vertical)
+        //{
+          //  VerifyFinderPatternRegions(pattern, patterns_final);
+        //}
 
         patterns_final = PogrupujPunkty(patterns_final);
 

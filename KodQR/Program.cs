@@ -20,11 +20,11 @@ public class QRCodeReader
         //string filePath = "rq3.png";
         //string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
-        //string filePath = "qrmax.png";
+        string filePath = "qrmax.png";
         //string filePath = "qrkat.png";
         //string filePath = "qrmid.png";
         //string filePath = "qr1_2.png";
-        string filePath = "qrciekawy.png";
+        //string filePath = "qrciekawy.png";
         //
         //string filePath = "qrehh.jpg";
         //string filePath = "test.png";

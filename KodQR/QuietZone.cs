@@ -40,7 +40,7 @@ namespace KodQR
             Point PS = new Point((int)((TP1.X + TP3.X) / 2.0), (int)((TP1.Y + TP3.Y) / 2.0));
 
             Point p1 = Calculate90Point(TP1, PS, TP1.w + 5);
-            Point p2 = Calculate90Point(TP2, PS, TP2.w * 1.30);
+            Point p2 = Calculate90Point(TP2, PS, TP2.w + 5);
             Point p3 = Calculate90Point(TP3, PS, TP3.w + 5);
 
             this.q1 = p1;

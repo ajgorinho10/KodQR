@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("KodQR")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+44224ac1fccac11c8ef83f0a4e2cdb81b096c051")]
 [assembly: System.Reflection.AssemblyProductAttribute("KodQR")]
 [assembly: System.Reflection.AssemblyTitleAttribute("KodQR")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
