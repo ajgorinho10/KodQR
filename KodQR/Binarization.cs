@@ -31,7 +31,7 @@ namespace KodQR
 
             // Binaryzacja obrazu za pomocą Adaptive Threshold
             Mat binary = new Mat();
-            CvInvoke.AdaptiveThreshold(image, binary, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 91, 20.0);
+            CvInvoke.AdaptiveThreshold(image, binary, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 201, 12.0);
             //CvInvoke.Threshold(image, binary, 0, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
             // Zwracamy wynikowy obraz w odcieniach szarości

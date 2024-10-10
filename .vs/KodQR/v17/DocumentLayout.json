@@ -7,20 +7,16 @@
       "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\findpatterns.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\findpatterns.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\grouping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\grouping.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\perspective.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\perspective.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\binarization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\binarization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\quietzone.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -38,51 +34,42 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "Binarization.cs",
               "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Binarization.cs",
               "RelativeDocumentMoniker": "KodQR\\Binarization.cs",
               "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Binarization.cs",
               "RelativeToolTip": "KodQR\\Binarization.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAABIAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAACEAAAB0AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-24T14:04:50.516Z"
+              "WhenOpened": "2024-10-05T00:05:17.114Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Grouping.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Grouping.cs",
-              "RelativeDocumentMoniker": "KodQR\\Grouping.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Grouping.cs",
-              "RelativeToolTip": "KodQR\\Grouping.cs",
-              "ViewState": "AQIAABYAAAAAAAAAAAAgwE0AAABfAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-23T10:02:24.447Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "FindPatterns.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\FindPatterns.cs",
-              "RelativeDocumentMoniker": "KodQR\\FindPatterns.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\FindPatterns.cs",
-              "RelativeToolTip": "KodQR\\FindPatterns.cs",
-              "ViewState": "AQIAAJwAAAAAAAAAAAAiwK0AAAANAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-23T09:44:05.308Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
               "Title": "QuietZone.cs",
               "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\QuietZone.cs",
               "RelativeDocumentMoniker": "KodQR\\QuietZone.cs",
               "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\QuietZone.cs",
               "RelativeToolTip": "KodQR\\QuietZone.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAACoAAAA6AAAA",
+              "ViewState": "AQIAADIAAAAAAAAAAAAQwFoAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-23T09:07:47.651Z"
+              "WhenOpened": "2024-10-02T16:56:45.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Perspective.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Perspective.cs",
+              "RelativeDocumentMoniker": "KodQR\\Perspective.cs",
+              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Perspective.cs",
+              "RelativeToolTip": "KodQR\\Perspective.cs",
+              "ViewState": "AQIAAIEAAAAAAAAAAAAAALgAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-10-02T16:40:24.086Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -92,7 +79,7 @@
               "RelativeDocumentMoniker": "KodQR\\Program.cs",
               "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\Program.cs",
               "RelativeToolTip": "KodQR\\Program.cs",
-              "ViewState": "AQIAAAsAAAAAAAAAAAAAABYAAAAIAAAA",
+              "ViewState": "AQIAAAMAAAAAAAAAAAAAABIAAABvAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-19T06:48:32.752Z",
               "EditorCaption": ""

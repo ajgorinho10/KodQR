@@ -59,7 +59,7 @@ namespace KodQR
         {
 
             Point x1 = new System.Drawing.Point(p2.X, p2.Y);
-            double MW = Height / (Math.Sqrt(2.0)) + 3.4;
+            double MW = Height / (Math.Sqrt(2.0)) + 0.0;
 
             double vX = ps.X - x1.X;
             double vY = ps.Y - x1.Y;
@@ -88,7 +88,7 @@ namespace KodQR
                 color = this.binaryImage.Data[point_further.Y, point_further.X, 0];
             }
 
-            MW = MW + (Height / 7.0);
+            MW = MW + (Height / 8.0) + 1;
             v_scaledX = v_unitX * MW;
             v_scaledY = v_unitY * MW;
             point_further = new Point((int)(x1.X - v_scaledX), (int)(x1.Y - v_scaledY));
@@ -119,12 +119,12 @@ namespace KodQR
 
             if (punkt.X >= binaryImage.Width)
             {
-                tmp.X = binaryImage.Width ;
+                tmp.X = binaryImage.Width -1 ;
             }
 
             if (punkt.Y >= binaryImage.Height)
             {
-                tmp.Y = binaryImage.Height ;
+                tmp.Y = binaryImage.Height -1 ;
             }
 
             return tmp;
@@ -164,7 +164,7 @@ namespace KodQR
         }
 
         // Implementacja algorytmu Bresenhama do przeglądania Pointów na linii
-        private static IEnumerable<Point> BresenhamLine(Point p1, Point p2, double GMW)
+        public static IEnumerable<Point> BresenhamLine(Point p1, Point p2, double GMW)
         {
             List<Point> points = new List<Point>();
 

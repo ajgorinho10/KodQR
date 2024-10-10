@@ -7,6 +7,7 @@ using static FindPatterns;
 using SixLabors.ImageSharp.Drawing.Processing;
 using System.Drawing;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 
 public class QRCodeReader
 {
@@ -20,9 +21,12 @@ public class QRCodeReader
         //string filePath = "rq3.png";
         //string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
-        string filePath = "qrmax.png";
-        //string filePath = "qrkat.png";
+        //string filePath = "qrmax.png";
+        string filePath = "qrkat.png";
         //string filePath = "qrmid.png";
+        //string filePath = "qr1_2.png";
+        //string filePath = "qrmoj2.jpg";
+        //string filePath = "qrmoj3.jpg";
         //string filePath = "qr1_2.png";
         //string filePath = "qrciekawy.png";
         //
@@ -32,7 +36,7 @@ public class QRCodeReader
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr_moj.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr12.jpg";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
-        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
+        ///string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
         //string outputFilePath = "output.png";
 
         DateTime startTime = DateTime.Now;
@@ -42,22 +46,20 @@ public class QRCodeReader
         FindPatterns findPatterns = new FindPatterns(img);
 
         List<Punkt> finderPatterns = findPatterns.FinderPatterns();
-        Console.WriteLine($"Ilosc punktow(bez grupowania): {finderPatterns.Count}");
+        //Console.WriteLine($"Ilosc punktow(bez grupowania): {finderPatterns.Count}");
 
         List<Tuple<Punkt, Punkt, Punkt>> grouped = Grouping.FindQRCodeCandidates(finderPatterns, img.Cols * 2);
-        Console.WriteLine($"Ilosc Grup(z grupowaniem): {grouped.Count}");
+        //Console.WriteLine($"Ilosc Grup(z grupowaniem): {grouped.Count}");
 
         List<Tuple<Punkt, Punkt, Punkt>> groupedQuiet = quietCheck(grouped,img);
-        Console.WriteLine($"Ilosc QRKodów(z QuietZone): {groupedQuiet.Count}");
+        //Console.WriteLine($"Ilosc QRKodów(z QuietZone): {groupedQuiet.Count}");
 
 
         DateTime endTime = DateTime.Now;
         TimeSpan duration = endTime - startTime;
         Console.WriteLine($"Czas wykonania: {duration.TotalMilliseconds} ms");
 
-
-
-        drawInfo(img, groupedQuiet, finderPatterns);
+        //drawInfo(img, groupedQuiet, finderPatterns);
     }
 
     public static List<Tuple<Punkt, Punkt, Punkt>> quietCheck(List<Tuple<Punkt, Punkt, Punkt>> grouped, Image<Gray, Byte> image)
@@ -67,15 +69,18 @@ public class QRCodeReader
 
          Parallel.ForEach(grouped, punkty => {
              QuietZone q = new QuietZone(image);
-             if (q.VerifyQuietZone(punkty.Item1, punkty.Item2, punkty.Item3))
+            if (q.VerifyQuietZone(punkty.Item1, punkty.Item2, punkty.Item3))
             {
                 final.Add(punkty);
                 list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
-            }
+
+                 Perspective perspective = new Perspective(image);
+                 perspective.SetUpPerspective(q.q1, q.q2, q.q3, punkty.Item1, punkty.Item2, punkty.Item3);
+             }
              //list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
          });
         final = Grouping.Filtrowanie(final);
-        if (true)
+        if (false)
         {
             foreach (var punkty in list)
             {
@@ -104,7 +109,7 @@ public class QRCodeReader
                     color,
                     1
                     );
-                CvInvoke.Imshow("Obraz z punktem", image);
+                //CvInvoke.Imshow("Obraz z punktem", image);
             }
         }
 
@@ -117,9 +122,8 @@ public class QRCodeReader
         DrawPatterns(img, finderPatterns);
         DrawGroupedPatterns(img, grouped);
 
-        if (img.Width > 1200 || img.Height > 1200) CvInvoke.Resize(img, img, new System.Drawing.Size(), 0.5, 0.5, Inter.Linear);
-        CvInvoke.Imshow("Obraz z punktem", img);
-        CvInvoke.WaitKey(0);
+        img.Save("output.png");
+        Process.Start(new ProcessStartInfo("output.png") { UseShellExecute = true });
     }
 
     public static void DrawPatterns(Image<Bgr, Byte> img, List<Punkt> patterns)
