@@ -15,14 +15,14 @@ public class QRCodeReader
     static void Main(string[] args)
     {
         //string filePath = "zyczenia-sensonauka.png";
-        //string filePath = "qr-code-21x21.png";
+        string filePath = "qr-code-21x21.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr7.png";
         //string filePath = "qr6.png";
         //string filePath = "rq3.png";
         //string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
         //string filePath = "qrmax.png";
-        string filePath = "qrkat.png";
+        //string filePath = "qrkat.png";
         //string filePath = "qrmid.png";
         //string filePath = "qr1_2.png";
         //string filePath = "qrmoj2.jpg";
@@ -36,7 +36,7 @@ public class QRCodeReader
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr_moj.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr12.jpg";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
-        ///string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
         //string outputFilePath = "output.png";
 
         DateTime startTime = DateTime.Now;
