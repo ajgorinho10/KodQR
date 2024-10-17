@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR — kopia (2)\\KodQR\\KodQR.csproj": {}
+    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR — kopia (2)\\KodQR\\KodQR.csproj": {
+    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR — kopia (2)\\KodQR\\KodQR.csproj",
+        "projectUniqueName": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj",
         "projectName": "KodQR",
-        "projectPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR — kopia (2)\\KodQR\\KodQR.csproj",
+        "projectPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj",
         "packagesPath": "C:\\Users\\kowal\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR — kopia (2)\\KodQR\\obj\\",
+        "outputPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

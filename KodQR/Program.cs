@@ -16,14 +16,14 @@ public class QRCodeReader
     {
         //string filePath = "zyczenia-sensonauka.png";
         //string filePath = "qr-code-21x21.png";
-        string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr7.png";
+        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr7.png";
         //string filePath = "qr6.png";
         //string filePath = "rq3.png";
         //string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
         //string filePath = "qrmax.png";
         //string filePath = "qrkat.png";
-        //string filePath = "qrmid.png";
+        string filePath = "qrmid.png";
         //string filePath = "qr1_2.png";
         //string filePath = "qrmoj2.jpg";
         //string filePath = "qr1_2.png";
@@ -76,6 +76,8 @@ public class QRCodeReader
 
                  Perspective perspective = new Perspective(image);
                  perspective.SetUpPerspective(q.q1, q.q2, q.q3, punkty.Item1, punkty.Item2, punkty.Item3);
+                 //CvInvoke.Imshow("qr_perspective", perspective.img_perspective);
+                 //CvInvoke.WaitKey(0);
              }
              //list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
          });
