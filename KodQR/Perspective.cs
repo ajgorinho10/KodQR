@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using static FindPatterns;
-using Accord.Math.Geometry;
-using System.ComponentModel.Design;
-using Accord.IO;
 using Emgu.CV.Util;
-using Accord.Imaging.Filters;
-using Accord.Statistics.Kernels;
-using static ZXing.Rendering.SvgRenderer;
+using static FindPatterns;
 using Accord.Math;
 
 
@@ -42,51 +33,18 @@ namespace KodQR
             return Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) + (p1.Y - p2.Y) * (p1.Y - p2.Y));
         }
 
-        public static Point PrzecięcieLin(Point point1_1, Point point1_2, Point point3_1, Point point3_2, Point point2_1)
+        public static Point PrzecięcieLin(Point point1_1, Point point1_2, Point point3_1, Point point3_2)
         {
-          /*  
-            if (Math.Abs(point2_1.X - point1_1.X) <= 1.0)
+            if(point1_1.X == point1_2.X)
             {
-                point1_1.X = point2_1.X;
+                return new Point(point1_1.X, point3_2.Y);
             }
 
-            if (Math.Abs(point2_1.Y - point1_1.Y) <= 1.0)
+            if (point1_1.Y == point1_2.Y)
             {
-                point1_1.Y = point2_1.Y;
+                return new Point(point3_2.X, point1_1.Y);
             }
 
-            if (Math.Abs(point2_1.X - point3_1.X) <= 1.0)
-            {
-                point3_1.X = point2_1.X;
-            }
-
-            if (Math.Abs(point2_1.Y - point3_1.Y) <= 1.0)
-            {
-                point3_1.Y = point2_1.Y;
-            }
-
-
-
-            if (Math.Abs(point1_1.X - point1_2.X) <= 1)
-            {
-                point1_2.X = point1_1.X;
-            }
-
-            if (Math.Abs(point1_1.Y - point1_2.Y) <= 1)
-            {
-                point1_2.Y = point1_1.Y;
-            }
-
-            if (Math.Abs(point3_1.Y - point3_2.Y) <= 1)
-            {
-                point3_2.Y = point3_1.Y;
-            }
-
-            if (Math.Abs(point3_1.X - point3_2.X) <= 1)
-            {
-                point3_2.X = point3_1.X;
-            }
-          */
 
             double a1 = 0, a2 = 0;
             double x = 0, y = 0;
@@ -132,6 +90,7 @@ namespace KodQR
 
             return new Point((int)x, (int)y);
         }
+
 
         public Point Calculate90Point(Punkt p2, Punkt ps, double Height)
         {
@@ -293,29 +252,43 @@ namespace KodQR
             Point point1_1 = FloodFill(punkt1, true, p1);
             Point point1_2 = new Point();
 
-            Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
+            //Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
             Point p4_new = Calculate90Point(ps, punkt2, distance(point1_1, point2_1));
 
             point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new);
             point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new);
 
-            p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2, point2_1);
+            p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
+
+            point3_2 = betterP4(point2_1, point1_1, p4_new, point3_1);
+            point3_1 = betterP4(point1_1, p4_new, point2_1, point3_1);
+
+            Console.WriteLine("Punkt przeciecia 3-1");
+            point3_1 = PrzecięcieLin(p4_new, point3_2, point2_1,point3_1);
+
+            point1_2 = betterP4(point2_1, point3_1, p4_new, point1_1);
+            point1_1 = betterP4(point3_1, p4_new, point2_1, point1_1);
+
+            Console.WriteLine("Punkt przeciecia 1-1");
+            point1_1 = PrzecięcieLin(p4_new, point1_2, point2_1, point1_1);
+
+
+
 
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
             ShowPerspective(point1_1, point1_2, point3_1, point3_2, point2_1, p4_new, image, punkt2);
-
-
         }
 
         public void ShowPerspective(Point point1_1, Point point1_2, Point point3_1, Point point3_2, Point point2_1, Point p4, Image<Bgr, Byte> image,Punkt punkt2)
         {
             MCvScalar color = new MCvScalar(255, 0, 255);
             MCvScalar color2 = new MCvScalar(0, 255, 0);
+            int grubosc = 1;
             CvInvoke.Circle(
                 image,
                 point3_1,
-                5,
+                grubosc,
                 color2,
                 -1
             );
@@ -323,7 +296,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 new Point((int)((point1_1.X + point3_1.X) / 2.0), (int)((point1_1.Y + point3_1.Y) / 2.0)),
-                5,
+                grubosc,
                 color2,
                 -1
             );
@@ -332,7 +305,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 point1_1,
-                5,
+                grubosc,
                 color3,
                 -1
             );
@@ -341,7 +314,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 point3_2,
-                5,
+                grubosc,
                 color5,
                 -1
             );
@@ -350,7 +323,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 point1_2,
-                5,
+                grubosc,
                 color6,
                 -1
             );
@@ -358,7 +331,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 point2_1,
-                5,
+                grubosc,
                 color6,
                 -1
             );
@@ -367,7 +340,7 @@ namespace KodQR
             CvInvoke.Circle(
                 image,
                 new System.Drawing.Point(p4.X, p4.Y),
-                5,
+                grubosc,
                 color6,
                 -1
             );
@@ -422,9 +395,66 @@ namespace KodQR
 
             CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Cubic, Warp.FillOutliers, BorderType.Replicate, new MCvScalar(0, 0, 0));
             this.img_perspective = dstImage;
-        
+            ImgToArray(dstImage, punkt2.w);
             CvInvoke.Imshow("Transformed Image", dstImage);
             CvInvoke.WaitKey(0);
+        }
+
+        public void ImgToArray(Image<Gray, Byte> im, double spacing)
+        {
+            Image<Bgr, Byte> image = im.Convert<Bgr, Byte>();
+            //spacing -= 0.1;
+            //spacing = image.Height/(spacing/1.5);
+            spacing /= 7.0;
+            Console.WriteLine($"w:{spacing}");
+            // Pobierz wymiary obrazu
+            int width = image.Width;
+            int height = image.Height;
+
+            // Kolor linii (np. czerwony)
+            MCvScalar lineColor = new MCvScalar(0, 0, 255); // Kolor BGR (nie RGB)
+
+            // Grubość linii
+            int thickness = 1;
+
+            // Rysowanie poziomych linii siatki
+            for (int y = 0; y <= height; y += (int)spacing)
+            {
+                Point pt1 = new Point(0, y);       // Punkt początkowy (lewa strona)
+                Point pt2 = new Point(width, y);   // Punkt końcowy (prawa strona)
+                CvInvoke.Line(image, pt1, pt2, lineColor, thickness);
+            }
+
+            CvInvoke.Imshow("xd",image);
+        }
+    
+
+        static bool IsSquare(Point[] contour)
+        {
+            const double angleTolerance = 0.3; // Tolerancja na odchylenia kąta od 90 stopni
+
+            for (int i = 0; i < 4; i++)
+            {
+                double angle = GetAngle(contour[i], contour[(i + 1) % 4], contour[(i + 2) % 4]);
+                if (Math.Abs(angle - 90) > angleTolerance * 90)
+                {
+                    return false; // Jeśli któryś z kątów nie wynosi około 90 stopni
+                }
+            }
+
+            return true;
+        }
+
+        // Funkcja obliczająca kąt między trzema punktami
+        static double GetAngle(Point pt1, Point pt2, Point pt3)
+        {
+            double dx1 = pt1.X - pt2.X;
+            double dy1 = pt1.Y - pt2.Y;
+            double dx2 = pt3.X - pt2.X;
+            double dy2 = pt3.Y - pt2.Y;
+
+            double angle = Math.Atan2(dy2, dx2) - Math.Atan2(dy1, dx1);
+            return Math.Abs(angle * (180.0 / Math.PI)); // Zamiana na stopnie
         }
 
         public Point betterP4(Point p1, Point p2, Point p3,Point p4)
@@ -432,19 +462,19 @@ namespace KodQR
             Point p = new Point(p4.X, p4.Y);
             int[] line1 = Line(p3, p);
 
-            p3 = nowyPunkt(p3, p2, p3,false,1.5);
-            p = nowyPunkt(p3, p2, p,true,1.5);
+            p3 = nowyPunkt(p3, p2, p3,true,1.5);
+            p = nowyPunkt(p3, p2, p,true, 1.5);
             int[] line2 = Line(p3, p);
+            Console.WriteLine($"line1[0]:{line1[0]} line1[1]:{line1[1]} line1[2]:{line1[2]}");
+            Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
 
-            if (line1.Sum() > 0 && line2.Sum() == 0)
+            if (line1.Sum() > 0 && line2.Sum() <= 5)
             {
                 Console.WriteLine("Opcja A");
-                return p;
+                return p4;
             }
             else
             {
-                Console.WriteLine($"line1[0]:{line1[0]} line1[1]:{line1[1]} line1[2]:{line1[2]}");
-                Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                 if (line1.Sum() > 0 && line2[2] > 0)
                 {
                     Console.WriteLine("Start B");
@@ -453,7 +483,9 @@ namespace KodQR
                     //p = nowyPunkt(p, p1, true);
                     Point p_old = new Point();
                     p_old.X = p.X; p_old.Y = p.Y;
-                    while (line2[2] > 0)
+                    double d = distance(p3, p);
+                    double ratio = line2[2] / (d/3.0);
+                    while (ratio > 0.1)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
                         p = nowyPunkt(p3, p2, p, true,1.5);
@@ -463,6 +495,7 @@ namespace KodQR
                             Console.WriteLine($"Poza QR");
                             break;
                         }
+                        ratio = line2[2] / (d / 3.0);
                         Console.Write("B__");
                         Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                         Console.WriteLine($"p: ({p.X},{p.Y})");
@@ -479,7 +512,7 @@ namespace KodQR
                     while (line2[2] == 0)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, false,2.0);
+                        p = nowyPunkt(p3, p2, p, false,1.5);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
