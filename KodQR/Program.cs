@@ -17,9 +17,9 @@ public class QRCodeReader
         //string filePath = "zyczenia-sensonauka.png";
         //string filePath = "qr-code-21x21.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr7.png";
-        string filePath = "qr6.png";
+        //string filePath = "qr6.png";
         //string filePath = "rq3.png";
-        //string filePath = "qr-1.png";
+        string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
         //string filePath = "qrmax.png";
         //string filePath = "qrkat.png";

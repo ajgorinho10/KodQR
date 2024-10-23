@@ -37,17 +37,18 @@ namespace KodQR
         {
             if(point1_1.X == point1_2.X)
             {
-                return new Point(point1_1.X, point3_2.Y);
+                return new Point(point1_1.X, point3_1.Y);
             }
 
             if (point1_1.Y == point1_2.Y)
             {
-                return new Point(point3_2.X, point1_1.Y);
+                return new Point(point3_1.X, point1_1.Y);
             }
 
 
             double a1 = 0, a2 = 0;
             double x = 0, y = 0;
+            double b1 = 0, b2 = 0;
             double mianownikA1 = (double)(point1_1.X - point1_2.X);
             double mianownikA2 = (double)(point3_1.X - point3_2.X);
             double licznikA1 = (double)(point1_1.Y - point1_2.Y);
@@ -56,28 +57,29 @@ namespace KodQR
             if (mianownikA1 == 0)
             {
                 a1 = 0;
+                b1 = point1_2.Y;
             }
             else
             {
                 a1 = (double)(licznikA1) / mianownikA1;
+                b1 = point1_2.Y - (a1 * point1_2.X);
             }
 
             if (mianownikA2 == 0)
             {
                 a2 = 0;
+                b1 = point1_2.Y;
             }
             else
             {
                 a2 = (double)(licznikA2) / mianownikA2;
+                b2 = point3_2.Y - (a2 * point3_2.X);
             }
-
-            double b1 = point1_2.Y - (a1 * point1_2.X);
-            double b2 = point3_2.Y - (a2 * point3_2.X);
 
             Console.WriteLine($"a1: {a1}, a2: {a2}");
             Console.WriteLine($"b1: {b1}, b2: {b2}");
 
-            if (mianownikA1 != 0 && mianownikA2 != 0)
+            if ((mianownikA1 != 0) && (mianownikA2 != 0))
             {
                 x = (b2 - b1) / (a1 - a2);
                 y = a1 * x + b1;
@@ -88,6 +90,7 @@ namespace KodQR
                 y = point1_1.Y > point3_1.Y ? point1_1.Y : point3_1.Y;
             }
 
+            Console.WriteLine($"Koniec : x:{x} y:{y}");
             return new Point((int)x, (int)y);
         }
 
@@ -253,27 +256,42 @@ namespace KodQR
             Point point1_2 = new Point();
 
             //Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
+
             Point p4_new = Calculate90Point(ps, punkt2, distance(point1_1, point2_1));
-
-            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new);
-            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new);
-
+            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, true);
+            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, true);
             p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
 
-            point3_2 = betterP4(point2_1, point1_1, p4_new, point3_1);
-            point3_1 = betterP4(point1_1, p4_new, point2_1, point3_1);
+            Point point2_3, point2_4;
+            point2_3 = nowyPunkt(point1_1, point2_1, point2_1, true, 15.0);
+            point2_4 = nowyPunkt(point3_1, point2_1, point2_1, true, 15.0);
+            point2_3 = betterP4(point3_1, p4_new, point1_1, point2_3, true);
+            point2_4 = betterP4(point1_1, p4_new, point3_1, point2_4, true);
+            Console.WriteLine("Punkt przeciecia 2-1");
+            point2_1 = PrzecięcieLin(point1_1, point2_3, point3_1, point2_4);
 
+            Point point3_3, point3_4;
+            point3_3 = nowyPunkt(p4_new, point3_1, point3_1,true,15.0);
+            point3_4 = nowyPunkt(point2_1, point3_1, point3_1,true,15.0);
+            point3_3 = betterP4(point2_1, point1_1, p4_new, point3_1, true);
+            point3_4 = betterP4(p4_new, point1_1, point2_1, point3_1, true);
             Console.WriteLine("Punkt przeciecia 3-1");
-            point3_1 = PrzecięcieLin(p4_new, point3_2, point2_1,point3_1);
+            point3_1 = PrzecięcieLin(p4_new, point3_3, point2_1,point3_4);
 
-            point1_2 = betterP4(point2_1, point3_1, p4_new, point1_1);
-            point1_1 = betterP4(point3_1, p4_new, point2_1, point1_1);
 
+            Point point1_3, point1_4;
+            point1_3 = nowyPunkt(p4_new, point1_1, point1_1,true,15.0);
+            point1_4 = nowyPunkt(point2_1, point1_1, point1_1,true,15.0);
+            point1_3 = betterP4(point2_1, point3_1, p4_new, point1_1, true);
+            point1_4 = betterP4(p4_new, point3_1, point2_1, point1_1, true);
             Console.WriteLine("Punkt przeciecia 1-1");
-            point1_1 = PrzecięcieLin(p4_new, point1_2, point2_1, point1_1);
+            point1_1 = PrzecięcieLin(p4_new, point1_3, point2_1, point1_4);
 
 
-
+            point2_1 = nowyPunkt(p4_new, point2_1, point2_1, true, 4.5);
+            point1_1 = nowyPunkt(p4_new, point1_1, point1_1, true, 3.0);
+            point3_1 = nowyPunkt(p4_new, point3_1, point3_1, true, 3.0);
+            //p4_new = nowyPunkt(point2_1, p4_new, p4_new, true, 1.5);
 
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
@@ -345,6 +363,7 @@ namespace KodQR
                 -1
             );
 
+            
             CvInvoke.Line(
                 image,
                 point1_1,
@@ -357,6 +376,22 @@ namespace KodQR
                 image,
                 point3_1,
                 new System.Drawing.Point(p4.X , p4.Y),
+                color,
+                1
+            );
+
+            CvInvoke.Line(
+                image,
+                point1_1,
+                point2_1,
+                color,
+                1
+            );
+
+            CvInvoke.Line(
+                image,
+                point3_1,
+                point2_1,
                 color,
                 1
             );
@@ -403,7 +438,7 @@ namespace KodQR
         public void ImgToArray(Image<Gray, Byte> im, double spacing)
         {
             Image<Bgr, Byte> image = im.Convert<Bgr, Byte>();
-            //spacing -= 0.1;
+            //spacing += 0.1;
             //spacing = image.Height/(spacing/1.5);
             spacing /= 7.0;
             Console.WriteLine($"w:{spacing}");
@@ -418,7 +453,7 @@ namespace KodQR
             int thickness = 1;
 
             // Rysowanie poziomych linii siatki
-            for (int y = 0; y <= height; y += (int)spacing)
+            for (int y = 1; y <= height; y += (int)spacing)
             {
                 Point pt1 = new Point(0, y);       // Punkt początkowy (lewa strona)
                 Point pt2 = new Point(width, y);   // Punkt końcowy (prawa strona)
@@ -457,25 +492,25 @@ namespace KodQR
             return Math.Abs(angle * (180.0 / Math.PI)); // Zamiana na stopnie
         }
 
-        public Point betterP4(Point p1, Point p2, Point p3,Point p4)
+        public Point betterP4(Point p1, Point p2, Point p3,Point p4,bool czy4)
         {
             Point p = new Point(p4.X, p4.Y);
             int[] line1 = Line(p3, p);
 
-            p3 = nowyPunkt(p3, p2, p3,true,1.5);
-            p = nowyPunkt(p3, p2, p,true, 1.5);
+            p3 = nowyPunkt(p3, p2, p3,true, 2.0);
+            p = nowyPunkt(p3, p2, p,true, 2.0);
             int[] line2 = Line(p3, p);
             Console.WriteLine($"line1[0]:{line1[0]} line1[1]:{line1[1]} line1[2]:{line1[2]}");
             Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
 
-            if (line1.Sum() > 0 && line2.Sum() <= 5)
+            if ((line1[0] + line1[1] + line1[2] > 0) && (line2[2] + line2[1] + line2[0] == 0))
             {
                 Console.WriteLine("Opcja A");
-                return p4;
+                return p;
             }
             else
             {
-                if (line1.Sum() > 0 && line2[2] > 0)
+                if ((line1[0] + line1[1] + line1[2] > 0) && (line2[2] > 0 || line2[1] > 0))
                 {
                     Console.WriteLine("Start B");
                     //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
@@ -484,49 +519,54 @@ namespace KodQR
                     Point p_old = new Point();
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
-                    double ratio = line2[2] / (d/3.0);
-                    while (ratio > 0.1)
+                    double ratio = (line2[2]) / (d/3.0);
+                    while (ratio > 0.2)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, true,1.5);
+                        p = nowyPunkt(p3, p2, p, true, 1.5);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
                             Console.WriteLine($"Poza QR");
                             break;
                         }
-                        ratio = line2[2] / (d / 3.0);
+                        ratio = (line2[2]) / (d/ 3.0);
                         Console.Write("B__");
                         Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                         Console.WriteLine($"p: ({p.X},{p.Y})");
                     }
                     Console.WriteLine("Koniec B");
-                    return p_old;
+                    if(czy4) return p;
+                    else return p_old;
                 }
-                else if (line1.Sum() == 0 && line2.Sum() == 0)
+                else if ((line1[0] + line1[1] + line1[2] == 0) && (line2[2] == 0 || line2[1] == 0))
                 {
                     Console.WriteLine("Start C");
                     //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                     Point p_old = new Point();
                     p_old.X = p.X; p_old.Y = p.Y;
-                    while (line2[2] == 0)
+                    double d = distance(p3, p);
+                    double ratio = (line2[2]) / (d / 3.0);
+                    while (ratio < 0.2)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, false,1.5);
+                        p = nowyPunkt(p3, p2, p, false,1.3);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
                             break;
                         }
+                        ratio = (line2[2]) / (d / 3.0);
                         Console.Write("C__");
                         Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                     }
                     Console.WriteLine("Koniec C");
-                    return p_old;
+                    if (czy4) return p;
+                    else return p_old;
                 }
 
                 Console.WriteLine("Brak Opcji");
-                return p4;
+                return p;
             }
         }
 
