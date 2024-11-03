@@ -56,14 +56,14 @@ public class FindPatterns
         {
             if (obj is Punkt other)
             {
-                return Math.Abs(this.X - other.X) <=1 && Math.Abs(this.Y - other.Y) <= 1;
+                return Math.Abs(this.X - other.X) <=1 && Math.Abs(this.Y - other.Y) <= 1 && Math.Abs(this.w - other.w) < 2;
             }
             return false;
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(X, Y);
+            return HashCode.Combine(X, Y, w);
         }
     }
 

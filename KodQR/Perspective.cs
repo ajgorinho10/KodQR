@@ -8,6 +8,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using static FindPatterns;
 using Accord.Math;
+using ImageProcessor.Processors;
 
 
 namespace KodQR
@@ -76,8 +77,8 @@ namespace KodQR
                 b2 = point3_2.Y - (a2 * point3_2.X);
             }
 
-            Console.WriteLine($"a1: {a1}, a2: {a2}");
-            Console.WriteLine($"b1: {b1}, b2: {b2}");
+            //Console.WriteLine($"a1: {a1}, a2: {a2}");
+            //Console.WriteLine($"b1: {b1}, b2: {b2}");
 
             if ((mianownikA1 != 0) && (mianownikA2 != 0))
             {
@@ -90,7 +91,7 @@ namespace KodQR
                 y = point1_1.Y > point3_1.Y ? point1_1.Y : point3_1.Y;
             }
 
-            Console.WriteLine($"Koniec : x:{x} y:{y}");
+            //Console.WriteLine($"Koniec : x:{x} y:{y}");
             return new Point((int)x, (int)y);
         }
 
@@ -258,44 +259,15 @@ namespace KodQR
             //Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
 
             Point p4_new = Calculate90Point(ps, punkt2, distance(point1_1, point2_1));
-            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, true);
-            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, true);
+            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, false);
+            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, false);
             p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
-
-            Point point2_3, point2_4;
-            point2_3 = nowyPunkt(point1_1, point2_1, point2_1, true, 15.0);
-            point2_4 = nowyPunkt(point3_1, point2_1, point2_1, true, 15.0);
-            point2_3 = betterP4(point3_1, p4_new, point1_1, point2_3, true);
-            point2_4 = betterP4(point1_1, p4_new, point3_1, point2_4, true);
-            Console.WriteLine("Punkt przeciecia 2-1");
-            point2_1 = PrzecięcieLin(point1_1, point2_3, point3_1, point2_4);
-
-            Point point3_3, point3_4;
-            point3_3 = nowyPunkt(p4_new, point3_1, point3_1,true,15.0);
-            point3_4 = nowyPunkt(point2_1, point3_1, point3_1,true,15.0);
-            point3_3 = betterP4(point2_1, point1_1, p4_new, point3_1, true);
-            point3_4 = betterP4(p4_new, point1_1, point2_1, point3_1, true);
-            Console.WriteLine("Punkt przeciecia 3-1");
-            point3_1 = PrzecięcieLin(p4_new, point3_3, point2_1,point3_4);
-
-
-            Point point1_3, point1_4;
-            point1_3 = nowyPunkt(p4_new, point1_1, point1_1,true,15.0);
-            point1_4 = nowyPunkt(point2_1, point1_1, point1_1,true,15.0);
-            point1_3 = betterP4(point2_1, point3_1, p4_new, point1_1, true);
-            point1_4 = betterP4(p4_new, point3_1, point2_1, point1_1, true);
-            Console.WriteLine("Punkt przeciecia 1-1");
-            point1_1 = PrzecięcieLin(p4_new, point1_3, point2_1, point1_4);
-
-
-            point2_1 = nowyPunkt(p4_new, point2_1, point2_1, true, 4.5);
-            point1_1 = nowyPunkt(p4_new, point1_1, point1_1, true, 3.0);
-            point3_1 = nowyPunkt(p4_new, point3_1, point3_1, true, 3.0);
-            //p4_new = nowyPunkt(point2_1, p4_new, p4_new, true, 1.5);
 
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
             ShowPerspective(point1_1, point1_2, point3_1, point3_2, point2_1, p4_new, image, punkt2);
+            Console.WriteLine($"w:{punkt2.w}");
+            ImgToArray(this.img_perspective,punkt2.w);
         }
 
         public void ShowPerspective(Point point1_1, Point point1_2, Point point3_1, Point point3_2, Point point2_1, Point p4, Image<Bgr, Byte> image,Punkt punkt2)
@@ -401,7 +373,7 @@ namespace KodQR
             Console.WriteLine($"p2:{point2_1.X},{point2_1.Y}");
             Console.WriteLine($"p4:{p4.X},{p4.Y}");
             image.Save("perspektywa.png");
-            Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
+            //Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
 
 
             PointF[] srcPoints = new PointF[]
@@ -414,6 +386,9 @@ namespace KodQR
 
             double dis_X = distance(point2_1,point3_1);
             double dis_Y = distance(point2_1, point3_1);
+
+            dis_X = dis_X > dis_Y ? dis_X : dis_Y;
+            dis_Y = dis_Y > dis_X ? dis_Y : dis_X;
 
             PointF[] dstPoints = new PointF[]
             {
@@ -430,66 +405,152 @@ namespace KodQR
 
             CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Cubic, Warp.FillOutliers, BorderType.Replicate, new MCvScalar(0, 0, 0));
             this.img_perspective = dstImage;
-            ImgToArray(dstImage, punkt2.w);
-            CvInvoke.Imshow("Transformed Image", dstImage);
-            CvInvoke.WaitKey(0);
+            //CvInvoke.Imshow("Transformed Image", dstImage);
+            //CvInvoke.WaitKey(0);
         }
 
-        public void ImgToArray(Image<Gray, Byte> im, double spacing)
+        public void ImgToArray(Image<Gray, Byte> im,double w)
         {
-            Image<Bgr, Byte> image = im.Convert<Bgr, Byte>();
-            //spacing += 0.1;
-            //spacing = image.Height/(spacing/1.5);
-            spacing /= 7.0;
-            Console.WriteLine($"w:{spacing}");
-            // Pobierz wymiary obrazu
-            int width = image.Width;
-            int height = image.Height;
+            Console.WriteLine($"w:{im.Width} h:{im.Height}");
+            Mat xd = im.Mat;
+            Mat blurredImage = new Mat();
+            Mat mask = new Mat();
+            Mat sharpenedImage = new Mat();
 
-            // Kolor linii (np. czerwony)
-            MCvScalar lineColor = new MCvScalar(0, 0, 255); // Kolor BGR (nie RGB)
-
-            // Grubość linii
-            int thickness = 1;
-
-            // Rysowanie poziomych linii siatki
-            for (int y = 1; y <= height; y += (int)spacing)
+            int blur = im.Width / 20 + 1;
+            if(blur%2 == 0)
             {
-                Point pt1 = new Point(0, y);       // Punkt początkowy (lewa strona)
-                Point pt2 = new Point(width, y);   // Punkt końcowy (prawa strona)
-                CvInvoke.Line(image, pt1, pt2, lineColor, thickness);
+                blur++;
             }
 
-            CvInvoke.Imshow("xd",image);
-        }
-    
+            int kernelSize = blur; // Rozmiar jądra; wybierz liczbę nieparzystą, np. 3, 5, 15, itd.
+            double sigmaX = blur;  // Odchylenie standardowe w osi X (można ustawić także sigmaY)
 
-        static bool IsSquare(Point[] contour)
-        {
-            const double angleTolerance = 0.3; // Tolerancja na odchylenia kąta od 90 stopni
+            CvInvoke.GaussianBlur(xd, blurredImage, new System.Drawing.Size(kernelSize, kernelSize), sigmaX);
+            CvInvoke.Subtract(xd, blurredImage, mask);
 
-            for (int i = 0; i < 4; i++)
+            CvInvoke.AddWeighted(xd, 1.5, mask, -0.5, 0, sharpenedImage);
+
+            CvInvoke.Threshold(sharpenedImage, sharpenedImage, 0, 255, ThresholdType.Binary|ThresholdType.Otsu);
+
+            im = sharpenedImage.ToImage<Gray, Byte>();
+            Image<Bgr, Byte> ima = im.Convert<Bgr, Byte>();
+            MCvScalar color = new MCvScalar(0, 255, 0);
+
+
+            List<List<Punkt>> points = new List<List<Punkt>>();
+
+            for (int y = 0; y < im.Height; y++)
             {
-                double angle = GetAngle(contour[i], contour[(i + 1) % 4], contour[(i + 2) % 4]);
-                if (Math.Abs(angle - 90) > angleTolerance * 90)
+                List<Punkt> l = new List<Punkt>();
+                int color1 = im.Data[y, 0, 0];
+                int leght = 0;
+                //CvInvoke.Line(ima, new Point(0, y), new Point(ima.Width, y), color);
+                for (int x = 0; x < im.Width; x++)
                 {
-                    return false; // Jeśli któryś z kątów nie wynosi około 90 stopni
+                    int color2 = im.Data[y,x,0];
+
+                    if(color2 == color1)
+                    {
+                        leght++;
+                    }
+                    else if(leght !=0)
+                    {
+                        l.Add(new Punkt(color1,y,leght));
+                        leght = 1;
+                        color1 = color1 == 0 ? 255: 0;
+                    }
+                    else
+                    {
+                        color1 = color1 == 0 ? 255 : 0;
+                        leght++;
+                    }
+                    
+
+                    if(x+1 == im.Width)
+                    {
+                        l.Add(new Punkt(color1, y, leght));
+                        points.Add(l);
+                    }
                 }
             }
 
-            return true;
-        }
+            List<List<Punkt>> points_final = new List<List<Punkt>>();
+            int tmp1_i = 0;
+            bool czyPierwszy = true;
+            for (int i = 1; i < points.Count-1; i++)
+            {
+                List<Punkt> tmp1 = points[i-1];
+                List<Punkt> tmp2 = points[i];
+                if (czyPierwszy)
+                {
+                    tmp1_i = i - 1;
+                    czyPierwszy = false;
+                }
 
-        // Funkcja obliczająca kąt między trzema punktami
-        static double GetAngle(Point pt1, Point pt2, Point pt3)
-        {
-            double dx1 = pt1.X - pt2.X;
-            double dy1 = pt1.Y - pt2.Y;
-            double dx2 = pt3.X - pt2.X;
-            double dy2 = pt3.Y - pt2.Y;
+                if((tmp1.Count == tmp2.Count))
+                {
+                    if(tmp1.Count != points[i+1].Count)
+                    {
+                            int index = (int)(Math.Round((tmp1_i + i) / 2.0));
+                            points_final.Add(points[index]);
+                            czyPierwszy = true;
+                    }
 
-            double angle = Math.Atan2(dy2, dx2) - Math.Atan2(dy1, dx1);
-            return Math.Abs(angle * (180.0 / Math.PI)); // Zamiana na stopnie
+                    if((i+1) >= points.Count-1)
+                    {
+                        points_final.Add(tmp1);
+                    }
+                }
+            }
+
+            int z = 1;
+            foreach(List<Punkt> punkts in points_final)
+            {
+                Console.Write($"i={z}:");
+                foreach (Punkt t in punkts)
+                {
+                    Console.Write($"{t.w} ");
+                    //Console.Write($"({t.X}:{t.Y}:{t.w}) ");
+                }
+                z++;
+                Console.WriteLine();
+            }
+
+            double moduleSize = (points_final[0][0].w/7.0);
+            if (moduleSize < 2) { 
+                for(int i = 0; i < points_final.Count; i++)
+                {
+                    moduleSize = (points_final[i][0].w/7.0);
+                    if (moduleSize > 2)
+                    {
+                        break;
+                    }
+                }
+            }
+            Console.WriteLine($"modsize:{moduleSize}");
+
+            for (int i = 0; i < points_final.Count; i++)
+            {
+                    CvInvoke.Line(ima, new Point(0, points_final[i][0].Y), new Point(ima.Width, points_final[i][0].Y), color);
+                    for (int j = 0; j < points_final[i].Count; j++)
+                    {
+                        double ilosc = Math.Round(points_final[i][j].w / moduleSize);
+                        //Console.Write($"{ilosc}");
+                        for (int k = 0; k < ilosc; k++)
+                        {
+                            Console.Write($"{(points_final[i][j].X < 128 ? "@" : "-")} ");
+                        }
+
+                    }
+                    Console.WriteLine();            
+            }
+
+            CvInvoke.Imshow("xd", ima);
+            CvInvoke.WaitKey(0);
+            points.Clear();
+            points_final.Clear();
+
         }
 
         public Point betterP4(Point p1, Point p2, Point p3,Point p4,bool czy4)
@@ -500,54 +561,54 @@ namespace KodQR
             p3 = nowyPunkt(p3, p2, p3,true, 2.0);
             p = nowyPunkt(p3, p2, p,true, 2.0);
             int[] line2 = Line(p3, p);
-            Console.WriteLine($"line1[0]:{line1[0]} line1[1]:{line1[1]} line1[2]:{line1[2]}");
-            Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
+            //Console.WriteLine($"line1[0]:{line1[0]} line1[1]:{line1[1]} line1[2]:{line1[2]}");
+            //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
 
             if ((line1[0] + line1[1] + line1[2] > 0) && (line2[2] + line2[1] + line2[0] == 0))
             {
-                Console.WriteLine("Opcja A");
+                //Console.WriteLine("Opcja A");
                 return p;
             }
             else
             {
                 if ((line1[0] + line1[1] + line1[2] > 0) && (line2[2] > 0 || line2[1] > 0))
                 {
-                    Console.WriteLine("Start B");
+                    //Console.WriteLine("Start B");
                     //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
-                    Console.WriteLine($"p: ({p.X},{p.Y})");
+                    //Console.WriteLine($"p: ({p.X},{p.Y})");
                     //p = nowyPunkt(p, p1, true);
                     Point p_old = new Point();
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d/3.0);
-                    while (ratio > 0.2)
+                    while (ratio > 0.1)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
                         p = nowyPunkt(p3, p2, p, true, 1.5);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
-                            Console.WriteLine($"Poza QR");
+                            //Console.WriteLine($"Poza QR");
                             break;
                         }
                         ratio = (line2[2]) / (d/ 3.0);
-                        Console.Write("B__");
-                        Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
-                        Console.WriteLine($"p: ({p.X},{p.Y})");
+                        //Console.Write("B__");
+                        //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
+                        //Console.WriteLine($"p: ({p.X},{p.Y})");
                     }
-                    Console.WriteLine("Koniec B");
+                    //Console.WriteLine("Koniec B");
                     if(czy4) return p;
                     else return p_old;
                 }
                 else if ((line1[0] + line1[1] + line1[2] == 0) && (line2[2] == 0 || line2[1] == 0))
                 {
-                    Console.WriteLine("Start C");
+                    //Console.WriteLine("Start C");
                     //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                     Point p_old = new Point();
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d / 3.0);
-                    while (ratio < 0.2)
+                    while (ratio < 0.1)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
                         p = nowyPunkt(p3, p2, p, false,1.3);
@@ -557,15 +618,15 @@ namespace KodQR
                             break;
                         }
                         ratio = (line2[2]) / (d / 3.0);
-                        Console.Write("C__");
-                        Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
+                        //Console.Write("C__");
+                        //Console.WriteLine($"line2[0]:{line2[0]} line2[1]:{line2[1]} line2[2]:{line2[2]}");
                     }
-                    Console.WriteLine("Koniec C");
+                    //Console.WriteLine("Koniec C");
                     if (czy4) return p;
                     else return p_old;
                 }
 
-                Console.WriteLine("Brak Opcji");
+                //Console.WriteLine("Brak Opcji");
                 return p;
             }
         }

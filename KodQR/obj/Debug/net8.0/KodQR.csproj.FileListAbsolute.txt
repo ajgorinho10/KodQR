@@ -229,7 +229,6 @@ C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.GeneratedMSBu
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.AssemblyInfoInputs.cache
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.AssemblyInfo.cs
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.csproj.CoreCompileInputs.cache
-C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.sourcelink.json
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.csproj.Up2Date
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\refint\KodQR.dll
