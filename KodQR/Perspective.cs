@@ -5,11 +5,7 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using static FindPatterns;
-using Accord.Math;
-using ImageProcessor.Processors;
-
 
 namespace KodQR
 {
@@ -259,15 +255,13 @@ namespace KodQR
             //Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
 
             Point p4_new = Calculate90Point(ps, punkt2, distance(point1_1, point2_1));
-            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, false);
-            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, false);
+            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, true);
+            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, true);
             p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
-
+            
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
             ShowPerspective(point1_1, point1_2, point3_1, point3_2, point2_1, p4_new, image, punkt2);
-            Console.WriteLine($"w:{punkt2.w}");
-            ImgToArray(this.img_perspective,punkt2.w);
         }
 
         public void ShowPerspective(Point point1_1, Point point1_2, Point point3_1, Point point3_2, Point point2_1, Point p4, Image<Bgr, Byte> image,Punkt punkt2)
@@ -368,12 +362,24 @@ namespace KodQR
                 1
             );
 
-            Console.WriteLine($"p1:{point1_1.X},{point1_1.Y} p1_2:{point1_2.X},{point1_2.Y}");
-            Console.WriteLine($"p3:{point3_1.X},{point3_1.Y} p3_2:{point3_2.X},{point3_2.Y}");
-            Console.WriteLine($"p2:{point2_1.X},{point2_1.Y}");
-            Console.WriteLine($"p4:{p4.X},{p4.Y}");
+            //Console.WriteLine($"p1:{point1_1.X},{point1_1.Y} p1_2:{point1_2.X},{point1_2.Y}");
+            //Console.WriteLine($"p3:{point3_1.X},{point3_1.Y} p3_2:{point3_2.X},{point3_2.Y}");
+            //Console.WriteLine($"p2:{point2_1.X},{point2_1.Y}");
+            //Console.WriteLine($"p4:{p4.X},{p4.Y}");
             image.Save("perspektywa.png");
-            //Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
+
+            Point tmp = new Point();
+
+            if (point3_1.X < point2_1.X)
+            {
+                tmp.X = point3_1.X;
+                tmp.Y = point3_1.Y;
+
+                point3_1.X = point1_1.X; point3_1.Y = point1_1.Y;
+
+                point1_1 = tmp;
+            }
 
 
             PointF[] srcPoints = new PointF[]
@@ -384,11 +390,11 @@ namespace KodQR
             new PointF(point3_1.X, point3_1.Y)
             };
 
-            double dis_X = distance(point2_1,point3_1);
-            double dis_Y = distance(point2_1, point3_1);
+            double dis_X = distance(point2_1, point3_1);
+            double dis_Y = distance(point2_1, point1_1);
 
-            dis_X = dis_X > dis_Y ? dis_X : dis_Y;
-            dis_Y = dis_Y > dis_X ? dis_Y : dis_X;
+            dis_X = dis_X >= dis_Y ? dis_X : dis_Y;
+            dis_Y = dis_X;
 
             PointF[] dstPoints = new PointF[]
             {
@@ -403,154 +409,10 @@ namespace KodQR
             Image<Gray, Byte> dstImage = new Image<Gray, Byte>((int)dis_X, (int)dis_Y);
             Size newSize = new Size((int)dis_X, (int)dis_Y);
 
-            CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Cubic, Warp.FillOutliers, BorderType.Replicate, new MCvScalar(0, 0, 0));
+            CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
             this.img_perspective = dstImage;
             //CvInvoke.Imshow("Transformed Image", dstImage);
             //CvInvoke.WaitKey(0);
-        }
-
-        public void ImgToArray(Image<Gray, Byte> im,double w)
-        {
-            Console.WriteLine($"w:{im.Width} h:{im.Height}");
-            Mat xd = im.Mat;
-            Mat blurredImage = new Mat();
-            Mat mask = new Mat();
-            Mat sharpenedImage = new Mat();
-
-            int blur = im.Width / 20 + 1;
-            if(blur%2 == 0)
-            {
-                blur++;
-            }
-
-            int kernelSize = blur; // Rozmiar jądra; wybierz liczbę nieparzystą, np. 3, 5, 15, itd.
-            double sigmaX = blur;  // Odchylenie standardowe w osi X (można ustawić także sigmaY)
-
-            CvInvoke.GaussianBlur(xd, blurredImage, new System.Drawing.Size(kernelSize, kernelSize), sigmaX);
-            CvInvoke.Subtract(xd, blurredImage, mask);
-
-            CvInvoke.AddWeighted(xd, 1.5, mask, -0.5, 0, sharpenedImage);
-
-            CvInvoke.Threshold(sharpenedImage, sharpenedImage, 0, 255, ThresholdType.Binary|ThresholdType.Otsu);
-
-            im = sharpenedImage.ToImage<Gray, Byte>();
-            Image<Bgr, Byte> ima = im.Convert<Bgr, Byte>();
-            MCvScalar color = new MCvScalar(0, 255, 0);
-
-
-            List<List<Punkt>> points = new List<List<Punkt>>();
-
-            for (int y = 0; y < im.Height; y++)
-            {
-                List<Punkt> l = new List<Punkt>();
-                int color1 = im.Data[y, 0, 0];
-                int leght = 0;
-                //CvInvoke.Line(ima, new Point(0, y), new Point(ima.Width, y), color);
-                for (int x = 0; x < im.Width; x++)
-                {
-                    int color2 = im.Data[y,x,0];
-
-                    if(color2 == color1)
-                    {
-                        leght++;
-                    }
-                    else if(leght !=0)
-                    {
-                        l.Add(new Punkt(color1,y,leght));
-                        leght = 1;
-                        color1 = color1 == 0 ? 255: 0;
-                    }
-                    else
-                    {
-                        color1 = color1 == 0 ? 255 : 0;
-                        leght++;
-                    }
-                    
-
-                    if(x+1 == im.Width)
-                    {
-                        l.Add(new Punkt(color1, y, leght));
-                        points.Add(l);
-                    }
-                }
-            }
-
-            List<List<Punkt>> points_final = new List<List<Punkt>>();
-            int tmp1_i = 0;
-            bool czyPierwszy = true;
-            for (int i = 1; i < points.Count-1; i++)
-            {
-                List<Punkt> tmp1 = points[i-1];
-                List<Punkt> tmp2 = points[i];
-                if (czyPierwszy)
-                {
-                    tmp1_i = i - 1;
-                    czyPierwszy = false;
-                }
-
-                if((tmp1.Count == tmp2.Count))
-                {
-                    if(tmp1.Count != points[i+1].Count)
-                    {
-                            int index = (int)(Math.Round((tmp1_i + i) / 2.0));
-                            points_final.Add(points[index]);
-                            czyPierwszy = true;
-                    }
-
-                    if((i+1) >= points.Count-1)
-                    {
-                        points_final.Add(tmp1);
-                    }
-                }
-            }
-
-            int z = 1;
-            foreach(List<Punkt> punkts in points_final)
-            {
-                Console.Write($"i={z}:");
-                foreach (Punkt t in punkts)
-                {
-                    Console.Write($"{t.w} ");
-                    //Console.Write($"({t.X}:{t.Y}:{t.w}) ");
-                }
-                z++;
-                Console.WriteLine();
-            }
-
-            double moduleSize = (points_final[0][0].w/7.0);
-            if (moduleSize < 2) { 
-                for(int i = 0; i < points_final.Count; i++)
-                {
-                    moduleSize = (points_final[i][0].w/7.0);
-                    if (moduleSize > 2)
-                    {
-                        break;
-                    }
-                }
-            }
-            Console.WriteLine($"modsize:{moduleSize}");
-
-            for (int i = 0; i < points_final.Count; i++)
-            {
-                    CvInvoke.Line(ima, new Point(0, points_final[i][0].Y), new Point(ima.Width, points_final[i][0].Y), color);
-                    for (int j = 0; j < points_final[i].Count; j++)
-                    {
-                        double ilosc = Math.Round(points_final[i][j].w / moduleSize);
-                        //Console.Write($"{ilosc}");
-                        for (int k = 0; k < ilosc; k++)
-                        {
-                            Console.Write($"{(points_final[i][j].X < 128 ? "@" : "-")} ");
-                        }
-
-                    }
-                    Console.WriteLine();            
-            }
-
-            CvInvoke.Imshow("xd", ima);
-            CvInvoke.WaitKey(0);
-            points.Clear();
-            points_final.Clear();
-
         }
 
         public Point betterP4(Point p1, Point p2, Point p3,Point p4,bool czy4)
