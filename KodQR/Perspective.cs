@@ -5,6 +5,7 @@ using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using static FindPatterns;
 
 namespace KodQR
@@ -15,6 +16,12 @@ namespace KodQR
         public Image<Gray, Byte> img_perspective;
         int width;
         int height;
+
+        public Punkt p2;
+        public Punkt p1;
+        public Punkt p3;
+
+        public PointF[] pointsNew;
 
         public Perspective(Image<Gray, Byte> image)
         {
@@ -239,6 +246,11 @@ namespace KodQR
         {
             Console.WriteLine("Utworzenie perspektywy");
 
+
+            this.p1 = new Punkt(punkt1.X, punkt1.Y);
+            this.p2 = new Punkt(punkt2.X, punkt2.Y);
+            this.p3 = new Punkt(punkt3.X, punkt3.Y);
+
             Punkt ps = new Punkt();
             ps.X = (int)((punkt1.X + punkt3.X) / 2.0);
             ps.Y = (int)((punkt1.Y + punkt3.Y) / 2.0);
@@ -261,6 +273,9 @@ namespace KodQR
             
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
+            //this.p1 = punkt1;
+            //this.p2 = punkt2;
+            //this.p3 = punkt3;
             ShowPerspective(point1_1, point1_2, point3_1, point3_2, point2_1, p4_new, image, punkt2);
         }
 
@@ -271,7 +286,7 @@ namespace KodQR
             int grubosc = 1;
             CvInvoke.Circle(
                 image,
-                point3_1,
+                new Point(this.p1.X,this.p1.Y),
                 grubosc,
                 color2,
                 -1
@@ -279,95 +294,28 @@ namespace KodQR
 
             CvInvoke.Circle(
                 image,
-                new Point((int)((point1_1.X + point3_1.X) / 2.0), (int)((point1_1.Y + point3_1.Y) / 2.0)),
+                new Point(this.p2.X, this.p2.Y),
                 grubosc,
                 color2,
                 -1
             );
 
-            MCvScalar color3 = new MCvScalar(255, 0, 0);
             CvInvoke.Circle(
                 image,
-                point1_1,
+                new Point(this.p3.X, this.p3.Y),
                 grubosc,
-                color3,
+                color2,
                 -1
             );
 
-            MCvScalar color5 = new MCvScalar(0, 255, 255);
-            CvInvoke.Circle(
-                image,
-                point3_2,
-                grubosc,
-                color5,
-                -1
-            );
 
-            MCvScalar color6 = new MCvScalar(0, 0, 255);
-            CvInvoke.Circle(
-                image,
-                point1_2,
-                grubosc,
-                color6,
-                -1
-            );
-
-            CvInvoke.Circle(
-                image,
-                point2_1,
-                grubosc,
-                color6,
-                -1
-            );
-
-            MCvScalar color7 = new MCvScalar(255, 0, 255);
-            CvInvoke.Circle(
-                image,
-                new System.Drawing.Point(p4.X, p4.Y),
-                grubosc,
-                color6,
-                -1
-            );
-
-            
-            CvInvoke.Line(
-                image,
-                point1_1,
-                new System.Drawing.Point(p4.X, p4.Y),
-                color,
-                1
-            );
-
-            CvInvoke.Line(
-                image,
-                point3_1,
-                new System.Drawing.Point(p4.X , p4.Y),
-                color,
-                1
-            );
-
-            CvInvoke.Line(
-                image,
-                point1_1,
-                point2_1,
-                color,
-                1
-            );
-
-            CvInvoke.Line(
-                image,
-                point3_1,
-                point2_1,
-                color,
-                1
-            );
 
             //Console.WriteLine($"p1:{point1_1.X},{point1_1.Y} p1_2:{point1_2.X},{point1_2.Y}");
             //Console.WriteLine($"p3:{point3_1.X},{point3_1.Y} p3_2:{point3_2.X},{point3_2.Y}");
             //Console.WriteLine($"p2:{point2_1.X},{point2_1.Y}");
             //Console.WriteLine($"p4:{p4.X},{p4.Y}");
-            image.Save("perspektywa.png");
-            Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
+            //image.Save("perspektywa.png");
+            //Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
 
             Point tmp = new Point();
 
@@ -410,7 +358,19 @@ namespace KodQR
             Size newSize = new Size((int)dis_X, (int)dis_Y);
 
             CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
+            
             this.img_perspective = dstImage;
+
+            PointF[] srcPointsArray = new PointF[] {
+                new PointF(this.p1.X, this.p1.Y),
+                new PointF(this.p2.X, this.p2.Y),
+                new PointF(this.p3.X, this.p3.Y),
+            };
+
+            PointF[] dstPointsArray = new PointF[3];
+
+            this.pointsNew = CvInvoke.PerspectiveTransform(srcPointsArray, perspectiveMatrix);
+
             //CvInvoke.Imshow("Transformed Image", dstImage);
             //CvInvoke.WaitKey(0);
         }
