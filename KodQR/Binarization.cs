@@ -19,7 +19,7 @@ namespace KodQR
         {
             //Wczytujemy obraz kolorowy
             Mat image = CvInvoke.Imread(filepath, ImreadModes.AnyDepth);
-
+            //if (image.Width > 2000 || image.Height > 2000) CvInvoke.Resize(image, image, new System.Drawing.Size(), 10.2, 10.2, Inter.Cubic);
             if (image.IsEmpty)
             {
                 Console.WriteLine("Nie udało się wczytać obrazu.");
@@ -30,11 +30,13 @@ namespace KodQR
             Image<Gray, byte> claheImg = new Image<Gray, byte>(image.Size);
 
             // Tworzymy obiekt CLAHE
-            CvInvoke.CLAHE(grayImg,10.0,new Size(8,8), claheImg);
-            CvInvoke.Normalize(claheImg, claheImg, 0, 255, NormType.MinMax, DepthType.Default);
+            CvInvoke.CLAHE(grayImg,20.0,new Size(8,8), claheImg);
+            CvInvoke.Normalize(claheImg, claheImg, 128, 255, NormType.MinMax, DepthType.Default);
+            claheImg = claheImg.SmoothBlur(10,10);
+            //CvInvoke.GaussianBlur(claheImg, claheImg,new Size(101,101),10.0,10.0,BorderType.Wrap);
             //CvInvoke.Imshow("Obraz z punktem", claheImg);
             //CvInvoke.Imshow("Obraz z punktem2", image);
-            CvInvoke.WaitKey(0);
+            //CvInvoke.WaitKey(0);
 
             // Konwersja do skali szarości
             Mat gray = new Mat();
@@ -42,15 +44,15 @@ namespace KodQR
 
             // Binaryzacja obrazu za pomocą Adaptive Threshold
             Mat binary = new Mat();
-            int tmp = claheImg.Width / 5;
+            int tmp = claheImg.Width / 10;
             if (tmp % 2 == 0) { tmp++; }
-            CvInvoke.AdaptiveThreshold(image, binary, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, tmp, 20.0);
+            CvInvoke.AdaptiveThreshold(image, binary, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, tmp, 18.0);
             //CvInvoke.Threshold(claheImg, binary, 0, 255, ThresholdType.Binary | ThresholdType.Triangle);
 
             // Zwracamy wynikowy obraz w odcieniach szarości
-            if (binary.Width > 2000 || binary.Height > 2000) CvInvoke.Resize(binary, binary, new System.Drawing.Size(), 0.5, 0.5, Inter.NearestExact);
-            CvInvoke.Imshow("Obraz z punktem", binary);
-            CvInvoke.WaitKey(0); // Czekanie na naciśnięcie klawisza
+            //if (binary.Width > 2000 || binary.Height > 2000) CvInvoke.Resize(binary, binary, new System.Drawing.Size(), 0.5, 0.5, Inter.NearestExact);
+            //CvInvoke.Imshow("Obraz z punktem", binary);
+            //CvInvoke.WaitKey(0); // Czekanie na naciśnięcie klawisza
 
             
             return binary.ToImage<Gray, Byte>();

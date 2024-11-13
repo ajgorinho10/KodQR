@@ -20,6 +20,7 @@ namespace KodQR
         public Punkt p2;
         public Punkt p1;
         public Punkt p3;
+        public Punkt p4;
 
         public PointF[] pointsNew;
 
@@ -103,7 +104,7 @@ namespace KodQR
         {
 
             Point x1 = new System.Drawing.Point(p2.X, p2.Y);
-            double MW = Height / (Math.Sqrt(2.0)) - 1.0;
+            double MW = Height / (Math.Sqrt(2.0)) + 1.0;
 
             double vX = ps.X - x1.X;
             double vY = ps.Y - x1.Y;
@@ -244,12 +245,19 @@ namespace KodQR
 
         public void SetUpPerspective(Point p1, Point p2, Point p3,Punkt punkt1, Punkt punkt2, Punkt punkt3)
         {
-            Console.WriteLine("Utworzenie perspektywy");
+            //Console.WriteLine("Utworzenie perspektywy");
 
-
-            this.p1 = new Punkt(punkt1.X, punkt1.Y);
+            if(punkt3.X < punkt1.X)
+            {
+                this.p1 = new Punkt(punkt3.X, punkt3.Y);
+                this.p3 = new Punkt(punkt1.X, punkt1.Y);
+            }
+            else
+            {
+                this.p1 = new Punkt(punkt1.X, punkt1.Y);
+                this.p3 = new Punkt(punkt3.X, punkt3.Y);
+            }
             this.p2 = new Punkt(punkt2.X, punkt2.Y);
-            this.p3 = new Punkt(punkt3.X, punkt3.Y);
 
             Punkt ps = new Punkt();
             ps.X = (int)((punkt1.X + punkt3.X) / 2.0);
@@ -270,7 +278,29 @@ namespace KodQR
             point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, true);
             point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, true);
             p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
-            
+            this.p4 = new Punkt(p4_new.X,p4_new.Y,10.0);
+
+            Point tmp = new Point();
+
+            if (point3_1.X < point1_1.X)
+            {
+                tmp.X = point3_1.X;
+                tmp.Y = point3_1.Y;
+
+                point3_1.X = point1_1.X; 
+                point3_1.Y = point1_1.Y;
+
+                point1_1.X = tmp.X;
+                point1_1.Y = tmp.Y;
+            }
+
+            //Console.WriteLine($"xp1:{point1_1.X} yp1:{point1_1.Y}  xp3:{point3_1.X} yp3:{point3_1.Y}");
+
+            //point3_1 = nowyPunkt(point3_1, point1_1, point3_1, false,1.0);
+            //point1_1 = nowyPunkt(point1_1, point3_1, point1_1, false,1.0);
+            //Console.WriteLine($"xp1:{point1_1.X} yp1:{point1_1.Y}  xp3:{point3_1.X} yp3:{point3_1.Y}");
+            //p4_new = nowyPunkt(p4_new, point2_1, p4_new, false,2.0);
+
             Image<Bgr, byte> image = this.img.Convert<Bgr, Byte>();
 
             //this.p1 = punkt1;
@@ -317,18 +347,6 @@ namespace KodQR
             //image.Save("perspektywa.png");
             //Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
 
-            Point tmp = new Point();
-
-            if (point3_1.X < point2_1.X)
-            {
-                tmp.X = point3_1.X;
-                tmp.Y = point3_1.Y;
-
-                point3_1.X = point1_1.X; point3_1.Y = point1_1.Y;
-
-                point1_1 = tmp;
-            }
-
 
             PointF[] srcPoints = new PointF[]
             {
@@ -342,6 +360,7 @@ namespace KodQR
             double dis_Y = distance(point2_1, point1_1);
 
             dis_X = dis_X >= dis_Y ? dis_X : dis_Y;
+            if(dis_X< 200) { dis_X *= 2; }
             dis_Y = dis_X;
 
             PointF[] dstPoints = new PointF[]
@@ -356,8 +375,7 @@ namespace KodQR
 
             Image<Gray, Byte> dstImage = new Image<Gray, Byte>((int)dis_X, (int)dis_Y);
             Size newSize = new Size((int)dis_X, (int)dis_Y);
-
-            CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
+            CvInvoke.WarpPerspective(this.img, dstImage, perspectiveMatrix, newSize, Inter.Cubic, Warp.Default, BorderType.Replicate, new MCvScalar(10, 10, 10));
             
             this.img_perspective = dstImage;
 
@@ -403,7 +421,7 @@ namespace KodQR
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d/3.0);
-                    while (ratio > 0.1)
+                    while (line2[2]!=0 && line2[1] != 0)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
                         p = nowyPunkt(p3, p2, p, true, 1.5);
@@ -430,10 +448,10 @@ namespace KodQR
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d / 3.0);
-                    while (ratio < 0.1)
+                    while (line2[2] != 0 )
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, false,1.3);
+                        p = nowyPunkt(p3, p2, p, false,1.5);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
@@ -489,7 +507,7 @@ namespace KodQR
                         black[1]++;
                     }
                 }
-                else if (czesc <= ilosc)
+                else
                 {
                     if (this.img.Data[p.Y, p.X, 0] == 0)
                     {

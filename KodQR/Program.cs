@@ -22,7 +22,7 @@ public class QRCodeReader
         //string filePath = "qr-1.png";
         //string filePath = "megaqr.png";
         //string filePath = "qrmax.png";
-        string filePath = "qrkat.png";
+        //string filePath = "qrkat.png";
         //string filePath = "qrmid.png";
         //string filePath = "qr1_2.png";
         //string filePath = "qrmoj2.jpg";
@@ -31,11 +31,12 @@ public class QRCodeReader
         //string filePath = "qrkuba.jpg";
         //string filePath = "qrciekawy.png";
         //
-        //string filePath = "qrehh.jpg";
+        string filePath = "qrehh.jpg";
         //string filePath = "test.png";
         //string filePath = "test1.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr_moj.png";
-        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr12.jpg";
+        //string filePath = "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\qrehh.jpg";
+        //string filePath = "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\qr12.jpg";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
         //string outputFilePath = "output.png";
@@ -52,7 +53,7 @@ public class QRCodeReader
         List<Tuple<Punkt, Punkt, Punkt>> grouped = Grouping.FindQRCodeCandidates(finderPatterns, img.Cols * 2);
         //Console.WriteLine($"Ilosc Grup(z grupowaniem): {grouped.Count}");
 
-        List<Tuple<Punkt, Punkt, Punkt>> groupedQuiet = quietCheck(grouped,img);
+        List<Tuple<Punkt, Punkt, Punkt, Punkt, String>> groupedQuiet = quietCheck(grouped,img);
         //Console.WriteLine($"Ilosc QRKodów(z QuietZone): {groupedQuiet.Count}");
 
 
@@ -63,36 +64,42 @@ public class QRCodeReader
         //drawInfo(img, groupedQuiet, finderPatterns);
     }
 
-    public static List<Tuple<Punkt, Punkt, Punkt>> quietCheck(List<Tuple<Punkt, Punkt, Punkt>> grouped, Image<Gray, Byte> image)
+    public static List<Tuple<Punkt, Punkt, Punkt, Punkt, String>> quietCheck(List<Tuple<Punkt, Punkt, Punkt>> grouped, Image<Gray, Byte> image)
     {
-        ConcurrentBag<Tuple<Punkt, Punkt, Punkt>> final = new ConcurrentBag<Tuple<Punkt, Punkt, Punkt>>();
-        ConcurrentBag<Tuple<Point, Point, Point>> list = new ConcurrentBag<Tuple<Point, Point, Point>>();
+        ConcurrentBag<Tuple<Punkt, Punkt, Punkt, Punkt, String>> final = new ConcurrentBag<Tuple<Punkt, Punkt, Punkt, Punkt, String>>();
+        int ilosc = 0;
+        int sukces = 0;
 
-         Parallel.ForEach(grouped, punkty => {
+         foreach(var punkty in grouped){
              QuietZone q = new QuietZone(image);
             if (q.VerifyQuietZone(punkty.Item1, punkty.Item2, punkty.Item3))
             {
-                final.Add(punkty);
-                list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
 
-                 Perspective perspective = new Perspective(image);
+                 Perspective perspective = new Perspective(image.Copy());
                  perspective.SetUpPerspective(q.q1, q.q2, q.q3, punkty.Item1, punkty.Item2, punkty.Item3);
                  Decode dec = new Decode(perspective.img_perspective,perspective.pointsNew);
                  dec.fromImgToArray();
-                 //CvInvoke.Imshow("qr_perspective", perspective.img_perspective);
-                 //CvInvoke.WaitKey(0);
+
+                if(dec.DecodedText.Status == true)
+                {
+                    sukces+=1;
+                }
+                     //Console.WriteLine($"Decoded Text:{dec.DecodedText.Text}");
+                     Tuple<Punkt, Punkt, Punkt, Punkt, String> f = new Tuple<Punkt, Punkt, Punkt, Punkt, String>(perspective.p1, perspective.p2, perspective.p3, perspective.p4, dec.DecodedText.Text);
+                     final.Add(f);
+                ilosc+=1;
              }
-             //list.Add(new Tuple<Point, Point, Point>(q.q1, q.q2, q.q3));
-         });
-        final = Grouping.Filtrowanie(final);
-        if (false)
+         };
+
+
+        if (true)
         {
-            foreach (var punkty in list)
+            Image<Bgr,Byte> im = image.Convert<Bgr,Byte>();
+            foreach (var punkty in final)
             {
-                //Console.WriteLine($"Quite Zone: ({punkty.Item1.X}; {punkty.Item1.Y}), ({punkty.Item2.X}; {punkty.Item2.Y}), ({punkty.Item3.X}; {punkty.Item3.Y})");
                 MCvScalar color = new MCvScalar(0, 255, 0);
                 CvInvoke.Line(
-                    image,
+                    im,
                     new System.Drawing.Point(punkty.Item1.X, punkty.Item1.Y),
                     new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
                     color,
@@ -100,7 +107,7 @@ public class QRCodeReader
                     );
 
                 CvInvoke.Line(
-                    image,
+                    im,
                     new System.Drawing.Point(punkty.Item2.X, punkty.Item2.Y),
                     new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
                     color,
@@ -108,17 +115,34 @@ public class QRCodeReader
                     );
 
                 CvInvoke.Line(
-                    image,
+                    im,
+                    new System.Drawing.Point(punkty.Item4.X, punkty.Item4.Y),
                     new System.Drawing.Point(punkty.Item3.X, punkty.Item3.Y),
+                    color,
+                    1
+                    );
+
+                CvInvoke.Line(
+                    im,
+                    new System.Drawing.Point(punkty.Item4.X, punkty.Item4.Y),
                     new System.Drawing.Point(punkty.Item1.X, punkty.Item1.Y),
                     color,
                     1
                     );
+
+                CvInvoke.PutText(im, punkty.Item5,new Point(punkty.Item2.X, (int)((punkty.Item2.Y + punkty.Item1.Y)/2.0)),FontFace.HersheyTriplex,0.5,color);
                 //CvInvoke.Imshow("Obraz z punktem", image);
             }
+            //CvInvoke.Imshow("Obraz z punktem", im);
+            //CvInvoke.WaitKey(0);
+            Console.WriteLine($"ilosc:{ilosc} sukces:{sukces}");
+            double sprawnosc = ((double)sukces / (double)ilosc) * 100;
+            Console.WriteLine($"Sprawnosc:{sprawnosc}%");
+            im.Save("perspektywa.png");
+            Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
         }
 
-        return new List<Tuple<Punkt, Punkt, Punkt>>(final);
+        return new List<Tuple<Punkt, Punkt, Punkt, Punkt, String>>(final);
     }
 
     public static void drawInfo(Image<Gray, Byte> image, List<Tuple<Punkt, Punkt, Punkt>> grouped, List<Punkt> finderPatterns)
