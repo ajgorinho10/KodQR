@@ -13,6 +13,10 @@ using ZXing.Windows.Compatibility;
 using ImageProcessor.Common.Extensions;
 using SixLabors.ImageSharp.Drawing;
 using Emgu.CV.Reg;
+using System.Drawing.Printing;
+using System.Diagnostics;
+using ImageProcessor.Processors;
+using Emgu.CV.XFeatures2D;
 
 namespace KodQR
 {
@@ -32,6 +36,8 @@ namespace KodQR
         RegionDescriptors p1;
         RegionDescriptors p3;
 
+        Bitmap QRBitmap;
+
         public struct statusDecoded {
             public String Text;
             public bool Status;
@@ -50,32 +56,24 @@ namespace KodQR
         public void fromImgToArray()
         {
             cleanImg();
-            //Console.WriteLine($"img_w:{this.img.Width}");
             pattern();
             Qrsize_Vertical();
             Qrsize_horizontal();
 
-            //Console.WriteLine($"ModuleSize:{this.moduleS}");
-            //Console.WriteLine($"Qrsize:{this.QrS}");
-            //Console.WriteLine($"width:{this.img.Width}");
             double s = this.QrS;
             double mw = this.img.Width / s;
             this.moduleS = mw;
-            //mw = Math.Round( mw );
 
-            //Console.WriteLine($"Obliczony inaczej ModuleSize:{mw}");
-            //setWidth();
-            //setHeight();
-            //ToBitmap();
-            QrToBitmap(mw);
+            QrToBitmap(mw,true);
             if(this.DecodedText.Status == false)
             {
-                //CvInvoke.Imshow("przed", this.img);
                 Image<Gray, Byte> im = this.backup.Copy();
+                CvInvoke.CLAHE(im,40,new Size(8,8), im);
+                CvInvoke.Normalize(im, im, 0, 255, NormType.MinMax, DepthType.Cv8U);
                 im = im.SmoothBlur((int)this.moduleS/2, (int)this.moduleS/2);
                 int blur = (int)(this.moduleS * this.QrS)/2;
                 if (blur % 2 == 0) blur++;
-                CvInvoke.AdaptiveThreshold(im, im, 255.0, AdaptiveThresholdType.MeanC, ThresholdType.Binary, blur, this.moduleS*3);
+                CvInvoke.AdaptiveThreshold(im, im, 255.0, AdaptiveThresholdType.MeanC, ThresholdType.Binary, blur, this.moduleS);
 
                 this.img = new Image<Gray, Byte>(im.Width,im.Height);
                 this.img = im.Copy();
@@ -86,278 +84,129 @@ namespace KodQR
                 s = this.QrS;
                 mw = this.img.Width / s;
                 this.moduleS = mw;
-                QrToBitmap(mw);
+                QrToBitmap(this.moduleS,true);
                 if(this.DecodedText.Status == true)
                 {
                     Console.WriteLine("dalo");
                 }
+                else
+                {
+                    PointF[] srcPoints = new PointF[]
+                    {
+                        new PointF(0, 0),
+                        new PointF(0,this.img.Height),
+                        new PointF(this.img.Width, this.img.Height),
+                        new PointF(this.img.Width, 0)
+                    };
+
+                    PointF[] desPoints = new PointF[]
+                    {
+                        new PointF(0, 0),
+                        new PointF(this.img.Width, 0),
+                        new PointF(this.img.Width, this.img.Height),
+                        new PointF(0,this.img.Height)
+                    };
+                    Mat perspectiveMatrix = CvInvoke.GetPerspectiveTransform(srcPoints, desPoints);
+                    Size newSize = new Size(this.img.Width, this.img.Height);
+                    CvInvoke.WarpPerspective(this.img, this.img, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
+                    QrToBitmap(this.moduleS, true);
+                    if (this.DecodedText.Status == true)
+                    {
+                        Console.WriteLine("dalo2");
+                    }
+                    else
+                    {
+                        QrtoBitmap2();
+
+                        if (this.DecodedText.Status == true) {
+                            Console.WriteLine("dalo3");
+                        }
+                        else
+                        {
+                            //PrintBitmap();
+                        }
+                    }
+                }
             }
         }
 
-        public void ToBitmap()
+        public void PrintBitmap()
         {
-            Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
+            Image<Bgr, Byte> im = this.backup.Convert<Bgr, Byte>();
             MCvScalar color = new MCvScalar(255, 0, 255);
 
-            foreach (int y in this.wysokosc)
-            {
-                //CvInvoke.Circle(im, new Point(y, 100), 2, color);
-                foreach (int x in this.szerokosc)
-                {
-                    Console.Write($"{(this.img.Data[y,x,0]==0 ? "@" :"-")} ");
-                    CvInvoke.Circle(im, new Point(x, y), 1, color);
+            //Console.WriteLine($"module size:{this.moduleS}");
+            //Console.WriteLine($"QR size:{this.QrS}");
+            for (int i = 0; i < this.QRBitmap.Height; i++) {
+                for (int j = 0; j < this.QRBitmap.Width; j++) {
+                    Color col = this.QRBitmap.GetPixel(i, j);
+                    Console.Write($"{(col.R == 255 ? "-" : "@")} ");
+                    int startX = (int)((i + 0.70) * this.moduleS);
+                    int startY = (int)((j + 0.72) * this.moduleS);
+                    CvInvoke.Circle(im, new Point(startX, startY), 1, color);
                 }
                 Console.WriteLine();
             }
 
-            CvInvoke.Imshow("xd",im);
+            CvInvoke.Imshow("XD",im);
             CvInvoke.WaitKey(0);
         }
 
-        public void setHeight()
+        public void QrtoBitmap2()
         {
-            Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
+            Bitmap map = new Bitmap(this.QrS, this.QrS);
             MCvScalar color = new MCvScalar(255, 0, 255);
-            MCvScalar color2 = new MCvScalar(0, 0, 255);
-
-            Point p2 = new Point(this.p2.Centroid.X, this.p2.Centroid.Y);
-            List<int> list = new List<int>();
-            list.Add(p2.X);
-
-            //Dol
-            int lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
+            Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
+            for (int y = 0; y < this.QrS; y++)
             {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
+                for (int x = 0; x < this.QrS; x++)
+                {
+                    Mat m = this.img.Mat;
+                    int startx = (int)((x + 0.59) * this.moduleS );
+                    int starty = (int)((y + 0.59) * this.moduleS );
+                    int endx = (int)(this.moduleS / 1.7);
+                    int endy = (int)(this.moduleS / 1.7);
 
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.Y, 0] == 255)
-            {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
+                    if((startx + endx) >= this.img.Width-1)
+                    {
+                        endx = this.img.Width- startx;
+                    }
+                    if((starty + endy) >= this.img.Height-1)
+                    {
+                        endy = this.img.Height- starty;
+                    }
 
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            //gora
-            p2 = new Point(this.p2.Centroid.X, this.p2.Centroid.Y);
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0 && p2.Y > 0)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-            list.AddRange(this.wysokosc);
-            this.wysokosc = list;
-
-
-            //dol p1
-            list = new List<int>();
-            p2 = new Point(this.p1.Centroid.X, this.p1.Centroid.Y);
-            list.Add(p2.Y);
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0 &&( p2.Y < this.img.Height-1))
-            {
-                p2.Y++;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            //gora p1
-            p2 = new Point(this.p1.Centroid.X, this.p1.Centroid.Y);
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-
-            lastX = p2.Y;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.Y--;
-            }
-            list.Add((int)((lastX + p2.Y) / 2.0));
-            this.wysokosc.AddRange(list);
-
-            /*
-            foreach (int i in wysokosc)
-            {
-                CvInvoke.Circle(im, new Point(this.p2.Centroid.X, i), 2, color);
+                    Rectangle squareRegion = new Rectangle(startx, starty, endx, endy);
+                    Mat square = new Mat(m, squareRegion);
+                    MCvScalar meanValue = CvInvoke.Mean(square);
+                    Color c = meanValue.V0 < 128 ? Color.White : Color.Black;
+                    map.SetPixel(x, y, c);
+                   // Console.Write($"{(c.R != 255 ? "-" : "@")} ");
+                    CvInvoke.Rectangle(im, squareRegion, color);
+                }
+                //Console.WriteLine();
             }
 
-            CvInvoke.Imshow("xd", im);
-            CvInvoke.WaitKey(0);
-            */
+            //CvInvoke.Imshow("aha",im);
+            //CvInvoke.WaitKey(0);
+            this.QRBitmap = map;
+            var decoder = new BarcodeReader();
+            decoder.Options.TryInverted = true;
+            var result = decoder.Decode(map);
+
+            if (result != null)
+            {
+                this.DecodedText.Text = result.Text;
+                this.DecodedText.Status = true;
+            }
+            else
+            {
+                this.DecodedText.Text = "";
+                this.DecodedText.Status = false;
+            }
         }
 
-        public void setWidth()
-        {
-
-            Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
-            MCvScalar color = new MCvScalar(255, 0, 255);
-
-            if(this.p1.Centroid.X > this.p3.Centroid.X)
-            {
-                RegionDescriptors tmp = this.p3;
-                this.p3 = this.p1;
-                this.p1 = tmp;
-            }
-            
-            Point p2 = new Point(this.p2.Centroid.X, this.p2.Centroid.Y);
-            List<int> list = new List<int>();
-            list.Add(p2.X);
-
-            //Prawo
-            int lastX = p2.X;
-            while (this.img.Data[p2.Y,p2.X,0] == 0)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X)/2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            //Lewo
-            p2 = new Point(this.p2.Centroid.X, this.p2.Centroid.Y);
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0 && p2.X > 0)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-            list.AddRange(this.szerokosc);
-            this.szerokosc = list;
-
-            //Prawo p3
-            list = new List<int>();
-            p2 = new Point(this.p3.Centroid.X, this.p3.Centroid.Y);
-            list.Add(p2.X);
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0 && p2.X < this.img.Width-1)
-            {
-                p2.X++;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            //Lewo p3
-            p2 = new Point(this.p3.Centroid.X, this.p3.Centroid.Y);
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 255)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            lastX = p2.X;
-            while (this.img.Data[p2.Y, p2.X, 0] == 0 && p2.X > 0)
-            {
-                p2.X--;
-            }
-            list.Add((int)((lastX + p2.X) / 2.0));
-
-            this.szerokosc.AddRange(list);
-
-            /*
-            foreach (int i in szerokosc)
-            {
-                CvInvoke.Circle(im,new Point(i, this.p2.Centroid.Y),2,color);
-            }
-
-            CvInvoke.Imshow("xd",im);
-            CvInvoke.WaitKey(0);
-            */
-        }
-
-        public void QrToBitmap(double mw)
+        public void QrToBitmap(double mw,bool czy2)
         {
             Image<Bgr, Byte> t = this.img.Convert<Bgr, Byte>();
             MCvScalar color = new MCvScalar(255, 0, 255);
@@ -367,53 +216,49 @@ namespace KodQR
             {
                 for(int x=0;x < this.QrS; x++)
                 {
+
                     int startX = (int)((x+0.55) * mw);
                     int startY = (int)((y+0.55) * mw);
-
-                    if((startX > this.img.Width / 2.0))
-                    {
-                        startX = (int)((x + 0.60) * mw);
-                    }
-
-                    if ((startY > this.img.Height / 2.0))
-                    {
-                        startY = (int)((y + 0.65) * mw);
-                    }
-
-                    //Console.WriteLine($"startx:{startX} starty:{startY} w:{this.img.Width} h:{this.img.Height}");
-
-
                     int col = this.img.Data[startY, startX, 0];
-                    //CvInvoke.Circle(t, new Point(startX, startY), 1, color);
+
+                    if (czy2)
+                    {
+                        if ((startX > this.img.Width / 2.0) && (startY > this.img.Height / 2.0))
+                        {
+                            startX = (int)((x + 0.60) * mw);
+                        }
+                        if (startY > this.img.Height / 2.0)
+                        {
+                            startY = (int)((y + 0.65) * mw);
+                        }
+                    }
+                    else
+                    {
+                         startX = (int)((x + 0.70) * mw);
+                         startY = (int)((y + 0.72) * mw);
+                    }
+
                     Color c = col == 255 ? Color.White : Color.Black;
                     map.SetPixel(x, y, c);
-
-                   //Console.Write($"{(col == 255 ? "-":"@")} ");
-                   //CvInvoke.Circle(t, new Point(startX, startY), 0, color);
                 }
-                //Console.WriteLine();
             }
 
-
+            QRBitmap = map;
             var decoder = new BarcodeReader();
+            decoder.Options.TryInverted = true;
             var result = decoder.Decode(map);
+            map = new Bitmap(this.QrS, this.QrS);
 
             if (result != null)
             {
-                //Console.WriteLine($"Decoded:");
-                //Console.WriteLine($"{result.Text}");
                 this.DecodedText.Text = result.Text;
                 this.DecodedText.Status = true;
             }
             else
             {
-                //Console.WriteLine($"Nie udalo sie");
                 this.DecodedText.Text = "";
                 this.DecodedText.Status = false;
             }
-
-           //CvInvoke.Imshow("xd123", t);
-           //CvInvoke.WaitKey(0);
         }
 
         public double Qrsize_horizontal()

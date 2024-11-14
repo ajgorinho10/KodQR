@@ -18,35 +18,41 @@ namespace KodQR
         public static Image<Gray, Byte> Binarize(String filepath)
         {
             //Wczytujemy obraz kolorowy
-            Mat image = CvInvoke.Imread(filepath, ImreadModes.AnyDepth);
-            //if (image.Width > 2000 || image.Height > 2000) CvInvoke.Resize(image, image, new System.Drawing.Size(), 10.2, 10.2, Inter.Cubic);
+            Mat image = CvInvoke.Imread(filepath, ImreadModes.Color|ImreadModes.AnyDepth);
+            //if (image.Width > 2000 || image.Height > 2000) CvInvoke.Resize(image, image, new System.Drawing.Size(), 0.5, 0.5, Inter.Linear);
             if (image.IsEmpty)
             {
                 Console.WriteLine("Nie udało się wczytać obrazu.");
                 return null;
             }
 
-            Image<Gray, Byte> grayImg = image.ToImage<Gray,Byte>();
+            Mat grayImg = new Mat();
+            CvInvoke.CvtColor(image, grayImg,ColorConversion.Bgr2Gray);
             Image<Gray, byte> claheImg = new Image<Gray, byte>(image.Size);
 
             // Tworzymy obiekt CLAHE
-            CvInvoke.CLAHE(grayImg,20.0,new Size(8,8), claheImg);
-            CvInvoke.Normalize(claheImg, claheImg, 128, 255, NormType.MinMax, DepthType.Default);
-            claheImg = claheImg.SmoothBlur(10,10);
+            //CvInvoke.CLAHE(grayImg,2.0,new Size(8,8), claheImg);
+            //CvInvoke.Normalize(claheImg, claheImg, 0, 255, NormType.MinMax, DepthType.Cv8U);
+            //CvInvoke.GaussianBlur(claheImg, claheImg, new Size(3, 3), 0);
             //CvInvoke.GaussianBlur(claheImg, claheImg,new Size(101,101),10.0,10.0,BorderType.Wrap);
             //CvInvoke.Imshow("Obraz z punktem", claheImg);
             //CvInvoke.Imshow("Obraz z punktem2", image);
             //CvInvoke.WaitKey(0);
 
-            // Konwersja do skali szarości
-            Mat gray = new Mat();
-            CvInvoke.CvtColor(image, gray, ColorConversion.Gray2Bgr);
-
             // Binaryzacja obrazu za pomocą Adaptive Threshold
             Mat binary = new Mat();
             int tmp = claheImg.Width / 10;
             if (tmp % 2 == 0) { tmp++; }
-            CvInvoke.AdaptiveThreshold(image, binary, 255, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, tmp, 18.0);
+
+            double tmp2 = 20.0;
+            if (image.Width < 700 && image.Height < 700){
+                CvInvoke.AdaptiveThreshold(grayImg, binary, 255.0, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 121, 12);
+            }
+            else
+            {
+                Console.WriteLine($"Siema");
+                CvInvoke.AdaptiveThreshold(grayImg, binary, 255.0, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, tmp, 20.0);
+            }
             //CvInvoke.Threshold(claheImg, binary, 0, 255, ThresholdType.Binary | ThresholdType.Triangle);
 
             // Zwracamy wynikowy obraz w odcieniach szarości

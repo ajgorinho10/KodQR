@@ -31,13 +31,13 @@ public class QRCodeReader
         //string filePath = "qrkuba.jpg";
         //string filePath = "qrciekawy.png";
         //
-        string filePath = "qrehh.jpg";
+        //string filePath = "qrehh.jpg";
         //string filePath = "test.png";
         //string filePath = "test1.png";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr_moj.png";
         //string filePath = "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\qrehh.jpg";
         //string filePath = "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\qr12.jpg";
-        //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
+        string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qr10.jpg";
         //string filePath = "C:\\Users\\kowal\\source\\repos\\KodQRBackUp\\KodQR\\bin\\Debug\\net8.0\\qrdziwne2.png";
         //string outputFilePath = "output.png";
 

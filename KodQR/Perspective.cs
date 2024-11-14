@@ -275,8 +275,8 @@ namespace KodQR
             //Console.WriteLine($"dlugosc p2w:{punkt2.w}, dlugosc p2w*3.5:{punkt2.w*3.5} dlugosc p2 - p1:{distance(point1_1,point2_1)}");
 
             Point p4_new = Calculate90Point(ps, punkt2, distance(point1_1, point2_1));
-            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, true);
-            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, true);
+            point3_2 = betterP4(point1_1, point2_1, point3_1, p4_new, false);
+            point1_2 = betterP4(point3_1, point2_1, point1_1, p4_new, false);
             p4_new = PrzecięcieLin(point1_1, point1_2, point3_1, point3_2);
             this.p4 = new Punkt(p4_new.X,p4_new.Y,10.0);
 
@@ -421,10 +421,10 @@ namespace KodQR
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d/3.0);
-                    while (line2[2]!=0 && line2[1] != 0)
+                    while (line2[2] >= 1)
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, true, 1.5);
+                        p = nowyPunkt(p3, p2, p, true, 1.3);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
@@ -448,10 +448,10 @@ namespace KodQR
                     p_old.X = p.X; p_old.Y = p.Y;
                     double d = distance(p3, p);
                     double ratio = (line2[2]) / (d / 3.0);
-                    while (line2[2] != 0 )
+                    while (line2[2] < 2 )
                     {
                         p_old.X = p.X; p_old.Y = p.Y;
-                        p = nowyPunkt(p3, p2, p, false,1.5);
+                        p = nowyPunkt(p3, p2, p, false,1.3);
                         line2 = Line(p3, p);
                         if (line2[3] == -1)
                         {
