@@ -1,16 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Drawing.Imaging;
-using System.Threading.Channels;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using System.Drawing;
 using static FindPatterns;
-using OpenCvSharp;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 
 public class FindPatterns
  {
