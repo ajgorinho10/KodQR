@@ -1,11 +1,10 @@
-﻿using Emgu.CV;
+﻿using System;
+using System.Drawing;
+using System.Linq;
+using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;  // Dodaj tę przestrzeń nazw
-using System.Linq;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
+using Emgu.CV.Util;
 
 
 namespace KodQR.bar
@@ -17,6 +16,75 @@ namespace KodQR.bar
         public FindBar(Image<Gray, Byte> im) { this.img = im; }
 
         public void find()
+        {
+            Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
+            Mat gray = this.img.Mat;
+            Mat gradX = new Mat();
+            Mat gradY = new Mat();
+            CvInvoke.Sobel(gray, gradX, DepthType.Cv32F, 1, 0, -1);
+            CvInvoke.Sobel(gray, gradY, DepthType.Cv32F, 0, 1, -1);
+
+            Mat gradient = new Mat();
+            CvInvoke.Subtract(gradX, gradY, gradient);
+
+            Mat absGradient = new Mat();
+            CvInvoke.ConvertScaleAbs(gradient, absGradient,1.0,1.0);
+
+            Mat blurred = new Mat();
+            CvInvoke.Blur(absGradient, blurred, new Size(9, 9), new Point(-1, -1));
+
+            Mat thresh = new Mat();
+            CvInvoke.Threshold(blurred, thresh, 205, 255, ThresholdType.Binary);
+
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(14, 7),new Point(-1,-1));
+
+            Mat closed = new Mat();
+            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel,new Point(-1,-1),1,BorderType.Default,new MCvScalar(255));
+
+            CvInvoke.Erode(closed,closed,null,new Point(-1,-1),4,BorderType.Default,new MCvScalar(0));
+            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1), 4, BorderType.Default, new MCvScalar(0));
+
+            //Image<Bgr, byte> xd = closed.ToImage<Bgr, Byte>();
+            Image<Bgr, byte> xd = this.img.Convert<Bgr, Byte>();
+            using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
+            {
+                Mat hierarchy = new Mat();
+                CvInvoke.FindContours(closed, contours, hierarchy, RetrType.Tree, ChainApproxMethod.ChainApproxTc89Kcos);
+
+                var xd33 = hierarchy.GetData();
+                for (int i = 0; i < contours.Size; i++)
+                {
+                    if (xd33.GetValue(0, i, 1).ToString() == "-1")
+                    {
+                        continue;
+                    }
+                    RotatedRect rect = CvInvoke.MinAreaRect(contours[i]);
+                    Console.WriteLine($"rect:{rect.Size}");
+                    if (rect.Size.Width < 80 || rect.Size.Height < 80)
+                    {
+                        continue;
+                    }
+                    PointF[] boxF = CvInvoke.BoxPoints(rect);
+                    CvInvoke.Circle(xd,new Point((int)rect.Center.X, (int)rect.Center.Y), 5,new MCvScalar(0, 255, 0),-1);
+
+                    Point[] box = boxF.Select(p => new Point((int)p.X, (int)p.Y)).ToArray();
+
+                    // Rysowanie prostokąta na obrazie
+                    using (VectorOfVectorOfPoint contoursToDraw = new VectorOfVectorOfPoint())
+                    {
+                        contoursToDraw.Push(new VectorOfPoint(box));  // Dodajemy kontur prostokąta
+                        CvInvoke.DrawContours(xd, contoursToDraw, -1, new MCvScalar(0, 255, 0), 3);
+                    }
+                }
+            }
+
+            CvInvoke.Imshow("xddd", xd);
+            CvInvoke.WaitKey(0);
+            CvInvoke.DestroyAllWindows();
+        }
+
+
+        public void find2()
         {
             Image<Bgr, Byte> im = this.img.Convert<Bgr,Byte>();
             Mat grayImg = this.img.Mat;

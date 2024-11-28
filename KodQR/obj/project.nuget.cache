@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "aiFRZmJQyyY=",
+  "dgSpecHash": "sjXSP1hUFUw=",
   "success": true,
-  "projectFilePath": "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\KodQR.csproj",
+  "projectFilePath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kowal\\.nuget\\packages\\accord\\3.8.0\\accord.3.8.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\accord.imaging\\3.8.0\\accord.imaging.3.8.0.nupkg.sha512",
@@ -26,6 +26,7 @@
     "C:\\Users\\kowal\\.nuget\\packages\\opencvsharp4.extensions\\4.10.0.20240616\\opencvsharp4.extensions.4.10.0.20240616.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\opencvsharp4.runtime.win\\4.10.0.20240616\\opencvsharp4.runtime.win.4.10.0.20240616.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\opencvsharp4.windows\\4.10.0.20240616\\opencvsharp4.windows.4.10.0.20240616.nupkg.sha512",
+    "C:\\Users\\kowal\\.nuget\\packages\\oxyplot.core\\2.2.0\\oxyplot.core.2.2.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\runtime.native.system\\4.3.0\\runtime.native.system.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\sixlabors.fonts\\2.0.4\\sixlabors.fonts.2.0.4.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\sixlabors.imagesharp\\3.1.5\\sixlabors.imagesharp.3.1.5.nupkg.sha512",
@@ -34,6 +35,7 @@
     "C:\\Users\\kowal\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.globalization\\4.3.0\\system.globalization.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.io\\4.3.0\\system.io.4.3.0.nupkg.sha512",
+    "C:\\Users\\kowal\\.nuget\\packages\\system.io.pipelines\\9.0.0\\system.io.pipelines.9.0.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.memory\\4.5.5\\system.memory.4.5.5.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.reflection\\4.3.0\\system.reflection.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.reflection.extensions\\4.3.0\\system.reflection.extensions.4.3.0.nupkg.sha512",
@@ -49,23 +51,12 @@
     "C:\\Users\\kowal\\.nuget\\packages\\system.security.permissions\\4.4.0-preview1-25305-02\\system.security.permissions.4.4.0-preview1-25305-02.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.security.principal.windows\\4.4.0-preview1-25305-02\\system.security.principal.windows.4.4.0-preview1-25305-02.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.text.encoding\\4.3.0\\system.text.encoding.4.3.0.nupkg.sha512",
-    "C:\\Users\\kowal\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\kowal\\.nuget\\packages\\system.text.json\\8.0.4\\system.text.json.8.0.4.nupkg.sha512",
+    "C:\\Users\\kowal\\.nuget\\packages\\system.text.encodings.web\\9.0.0\\system.text.encodings.web.9.0.0.nupkg.sha512",
+    "C:\\Users\\kowal\\.nuget\\packages\\system.text.json\\9.0.0\\system.text.json.9.0.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.threading\\4.3.0\\system.threading.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\system.threading.tasks\\4.3.0\\system.threading.tasks.4.3.0.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\zxing.net\\0.16.9\\zxing.net.0.16.9.nupkg.sha512",
     "C:\\Users\\kowal\\.nuget\\packages\\zxing.net.bindings.windows.compatibility\\0.16.12\\zxing.net.bindings.windows.compatibility.0.16.12.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1903",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Pakiet „System.Text.Json” 8.0.4 ma znane wysoka luki w zabezpieczeniach o ważności, https://github.com/advisories/GHSA-8g4q-xg66-9fp4",
-      "libraryId": "System.Text.Json",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }

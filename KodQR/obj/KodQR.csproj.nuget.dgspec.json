@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\KodQR.csproj": {}
+    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\KodQR.csproj": {
+    "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\KodQR.csproj",
+        "projectUniqueName": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj",
         "projectName": "KodQR",
-        "projectPath": "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\KodQR.csproj",
+        "projectPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\KodQR.csproj",
         "packagesPath": "C:\\Users\\kowal\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kowal\\Documents\\GitHub\\QR\\KodQR\\KodQR\\obj\\",
+        "outputPath": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -26,7 +26,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
@@ -44,8 +43,9 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
-        }
+          "auditMode": "all"
+        },
+        "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -99,6 +99,10 @@
               "target": "Package",
               "version": "[4.10.0.20240616, )"
             },
+            "OxyPlot.Core": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            },
             "SixLabors.ImageSharp": {
               "target": "Package",
               "version": "[3.1.5, )"
@@ -113,7 +117,7 @@
             },
             "System.Text.Json": {
               "target": "Package",
-              "version": "[8.0.4, )"
+              "version": "[9.0.0, )"
             },
             "ZXing.Net": {
               "target": "Package",
@@ -140,7 +144,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.302/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

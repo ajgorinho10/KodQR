@@ -184,7 +184,6 @@ C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\SixLabors.ImageShar
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.Drawing.Common.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.Security.Permissions.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\zxing.dll
-C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\ZXing.ImageSharp.V2.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\runtimes\win-arm64\native\cvextern.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\runtimes\win-x64\native\cvextern.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\runtimes\win-x64\native\libusb-1.0.dll
@@ -236,7 +235,6 @@ C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.pdb
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.genruntimeconfig.cache
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\ref\KodQR.dll
 C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\Emgu.CV.Bitmap.dll
-C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.Text.Json.dll
 C:\Users\kowal\Documents\GitHub\KodQR — kopia (2)\KodQR\bin\Debug\net8.0\dll\x86\OpenCvSharpExtern.dll
 C:\Users\kowal\Documents\GitHub\KodQR — kopia (2)\KodQR\bin\Debug\net8.0\dll\x86\opencv_ffmpeg400.dll
 C:\Users\kowal\Documents\GitHub\KodQR — kopia (2)\KodQR\bin\Debug\net8.0\dll\x64\OpenCvSharpExtern.dll
@@ -401,3 +399,10 @@ C:\Users\kowal\Documents\GitHub\QR\KodQR\KodQR\obj\Debug\net8.0\KodQR.pdb
 C:\Users\kowal\Documents\GitHub\QR\KodQR\KodQR\obj\Debug\net8.0\KodQR.genruntimeconfig.cache
 C:\Users\kowal\Documents\GitHub\QR\KodQR\KodQR\obj\Debug\net8.0\ref\KodQR.dll
 C:\Users\kowal\Documents\GitHub\QR\KodQR\KodQR\bin\Debug\net8.0\ZXing.Windows.Compatibility.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\ZXing.Windows.Compatibility.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\obj\Debug\net8.0\KodQR.sourcelink.json
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\OxyPlot.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.IO.Pipelines.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.Text.Encodings.Web.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\System.Text.Json.dll
+C:\Users\kowal\Documents\GitHub\KodQR\KodQR\bin\Debug\net8.0\runtimes\browser\lib\net8.0\System.Text.Encodings.Web.dll

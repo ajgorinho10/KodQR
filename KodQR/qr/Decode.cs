@@ -102,7 +102,8 @@ namespace KodQR.qr
                     CvInvoke.WarpPerspective(img, img, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
                     //img = img.SmoothBlur((int)moduleS / 5, (int)moduleS / 5);
                     CvInvoke.AdaptiveThreshold(img, img, 255.0, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, blur*2+1, moduleS*2);
-
+                    //pattern();
+                    //Qrsize_Vertical();
                     QrToBitmap(moduleS, true);
                     if (DecodedText.Status == true)
                     {
@@ -257,11 +258,30 @@ namespace KodQR.qr
 
                     if (startx + endx >= img.Width)
                     {
-                        endx = img.Width - startx;
+                        endx = img.Width - startx-1;
                     }
                     if (starty + endy >= img.Height)
                     {
-                        endy = img.Height - starty;
+                        endy = img.Height - starty-1;
+                    }
+
+                    if(startx >= img.Width)
+                    {
+                        startx = img.Width - startx-1;
+                    }
+
+                    if(starty >= img.Height)
+                    {
+                        starty = img.Height - starty-1;
+                    }
+
+                    if(startx < 0)
+                    {
+                        startx = 0;
+                    }
+                    if (starty < 0) 
+                    { 
+                        starty = 0;
                     }
 
                     Rectangle squareRegion = new Rectangle(startx, starty, endx, endy);
@@ -307,6 +327,16 @@ namespace KodQR.qr
 
                     int startX = (int)((x + 0.55) * mw);
                     int startY = (int)((y + 0.55) * mw);
+
+                    if(startX > img.Width-1)
+                    {
+                        startX = img.Width-1;
+                    }
+
+                    if(startY > img.Height-1)
+                    {
+                        startY = img.Height-1;
+                    }
                     int col = img.Data[startY, startX, 0];
 
                     if (czy2)
@@ -406,13 +436,17 @@ namespace KodQR.qr
             Point p2 = new Point(pointsTopatterns[1].X, pointsTopatterns[1].Y);
             Point p3 = new Point(pointsTopatterns[2].X, pointsTopatterns[2].Y);
 
-            while (img.Data[p2.Y, p2.X, 0] == 0)
+            while (p2.Y < img.Height && p2.X < img.Width && p2.Y > 0 && p2.X > 0 && img.Data[p2.Y, p2.X, 0] == 0)
             {
                 p2.Y++;
             }
             p2.Y++;
 
             int ilosc_zmian = 1;
+            if(p2.Y > img.Height || p2.X > img.Width || p2.Y < 0 || p2.X < 0)
+            {
+                return;
+            }
             int color = img.Data[p2.Y, p2.X, 0];
             int lenght = 0;
             List<int> wysokosci = new List<int>();
