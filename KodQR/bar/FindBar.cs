@@ -5,6 +5,7 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using ImageProcessor.Imaging.Helpers;
 
 
 namespace KodQR.bar
@@ -15,7 +16,7 @@ namespace KodQR.bar
 
         public FindBar(Image<Gray, Byte> im) { this.img = im; }
 
-        public void find()
+        public void find2()
         {
             Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
             Mat gray = this.img.Mat;
@@ -34,7 +35,7 @@ namespace KodQR.bar
             CvInvoke.Blur(absGradient, blurred, new Size(9, 9), new Point(-1, -1));
 
             Mat thresh = new Mat();
-            CvInvoke.Threshold(blurred, thresh, 205, 255, ThresholdType.Binary);
+            CvInvoke.Threshold(blurred, thresh, 100, 255, ThresholdType.BinaryInv);
 
             Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(14, 7),new Point(-1,-1));
 
@@ -84,48 +85,57 @@ namespace KodQR.bar
         }
 
 
-        public void find2()
+        public void find3()
         {
             Image<Bgr, Byte> im = this.img.Convert<Bgr,Byte>();
-            Mat grayImg = this.img.Mat;
+            Mat image = this.img.Mat;
+            CvInvoke.GaussianBlur(this.img, image, new Size(9, 9), 3.0);
 
-            // 3. Wykryj krawędzie za pomocą algorytmu Canny
-            Mat edges = new Mat();
-            CvInvoke.Canny(grayImg, edges, 50, 200);
+            Mat structuringElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(15, 15), new System.Drawing.Point(-1, -1));
+            CvInvoke.MorphologyEx(image, image, MorphOp.Blackhat, structuringElement, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
+            CvInvoke.Threshold(image, image, 0, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
-            // 4. Wykryj linie za pomocą transformacji Hougha
-            using (Mat lines = new Mat())
-            {
-                CvInvoke.HoughLines(edges, lines, 1, Math.PI / 180, 100);
-
-                // 5. Iteruj przez wykryte linie i rysuj je na obrazie
-                for (int i = 0; i < lines.Rows; i++)
-                {
-                    float[] lineData = lines.GetData() // Pobiera dane jako tablicę
-                        .Cast<float>() // Rzutuje każdy element na `float`
-                        .Skip(i * 2) // Pomija pierwsze `i * 2` elementów
-                        .Take(2) // Pobiera kolejne 2 elementy
-                        .ToArray(); // Konwertuje wynik na tablicę
-                    double rho = lineData[0];   // Odległość od środka (r)
-                    double theta = lineData[1]; // Kąt w radianach
-
-                    // Przekształć (rho, theta) na punkty na linii
-                    double a = Math.Cos(theta);
-                    double b = Math.Sin(theta);
-                    double x0 = a * rho;
-                    double y0 = b * rho;
-
-                    Point pt1 = new Point((int)(x0 + 1000 * (-b)), (int)(y0 + 1000 * a));
-                    Point pt2 = new Point((int)(x0 - 1000 * (-b)), (int)(y0 - 1000 * a));
-
-                    // Rysuj linię na obrazie
-                    CvInvoke.Line(im, pt1, pt2, new MCvScalar(0, 0, 255), 2);
-                }
-            }
-
-            // 6. Wyświetl wynik
-            CvInvoke.Imshow("Hough Lines", im);
+            CvInvoke.Imshow("z", image);
+            CvInvoke.Imshow("bez", im);
             CvInvoke.WaitKey(0);
         }
+
+        public void find()
+        {
+            Mat image = this.img.Mat;
+
+            // Set maxFrq value
+            double maxFrq = 700; // Replace with your MaxFrq value
+
+            // Run the proposed algorithm
+            ProposedAlgorithm(image, maxFrq);
+
+        }
+
+        public void ProposedAlgorithm(Mat image, double maxFrq)
+        {
+            CvInvoke.GaussianBlur(this.img, image, new Size(9, 9), 3.0);
+
+            Mat structuringElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(21, 7), new System.Drawing.Point(-1, -1));
+            CvInvoke.MorphologyEx(image, image, MorphOp.Blackhat, structuringElement, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
+            CvInvoke.Threshold(image, image, 0, 255, ThresholdType.Binary | ThresholdType.Otsu);
+
+            Mat labels = new Mat();
+            Mat stats = new Mat();
+            Mat centroids = new Mat();
+            int numComponents = CvInvoke.ConnectedComponentsWithStats(image, labels, stats, centroids, LineType.EightConnected);
+
+            var statsData = stats.GetData();
+            int totalArea = image.Rows * image.Cols;
+
+            Mat output = new Mat();
+            labels.ConvertTo(output, DepthType.Cv8U);
+            CvInvoke.Normalize(output, output, 0, 255, NormType.MinMax);
+            CvInvoke.Imshow("XDD1", output);
+            CvInvoke.WaitKey(0);
+
+        }
+
+        
     }
 }
