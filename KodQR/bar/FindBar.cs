@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
+using Accord.Imaging.Filters;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
-using ImageProcessor.Imaging.Helpers;
 
 
 namespace KodQR.bar
@@ -16,7 +16,7 @@ namespace KodQR.bar
 
         public FindBar(Image<Gray, Byte> im) { this.img = im; }
 
-        public void find2()
+        public void find()
         {
             Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
             Mat gray = this.img.Mat;
@@ -35,15 +35,15 @@ namespace KodQR.bar
             CvInvoke.Blur(absGradient, blurred, new Size(9, 9), new Point(-1, -1));
 
             Mat thresh = new Mat();
-            CvInvoke.Threshold(blurred, thresh, 100, 255, ThresholdType.BinaryInv);
+            CvInvoke.Threshold(blurred, thresh, 128, 255, ThresholdType.Binary|ThresholdType.Otsu);
 
-            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(14, 7),new Point(-1,-1));
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(14, 2),new Point(-1,-1));
 
             Mat closed = new Mat();
-            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel,new Point(-1,-1),1,BorderType.Default,new MCvScalar(255));
+            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel,new Point(-1,-1),2,BorderType.Default,new MCvScalar(255));
 
-            CvInvoke.Erode(closed,closed,null,new Point(-1,-1),4,BorderType.Default,new MCvScalar(0));
-            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1), 4, BorderType.Default, new MCvScalar(0));
+            CvInvoke.Erode(closed,closed,null,new Point(-1,-1),15,BorderType.Default,new MCvScalar(255));
+            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1), 15, BorderType.Default, new MCvScalar(255));
 
             //Image<Bgr, byte> xd = closed.ToImage<Bgr, Byte>();
             Image<Bgr, byte> xd = this.img.Convert<Bgr, Byte>();
@@ -61,7 +61,15 @@ namespace KodQR.bar
                     }
                     RotatedRect rect = CvInvoke.MinAreaRect(contours[i]);
                     Console.WriteLine($"rect:{rect.Size}");
-                    if (rect.Size.Width < 80 || rect.Size.Height < 80)
+                    if (rect.Size.Width < 80 || rect.Size.Height < 80 || rect.Size.Width >= this.img.Width-10 || rect.Size.Height >= this.img.Height-10)
+                    {
+                       continue;
+                    }
+                    if(rect.Size.Height/rect.Size.Width < 0.5 || rect.Size.Height / rect.Size.Width > 3)
+                    {
+                        continue;
+                    }
+                    if(Math.Abs(rect.Size.Width-rect.Size.Height) < 20)
                     {
                         continue;
                     }
@@ -79,6 +87,7 @@ namespace KodQR.bar
                 }
             }
 
+            CvInvoke.Resize(xd, xd, new Size(500, 500));
             CvInvoke.Imshow("xddd", xd);
             CvInvoke.WaitKey(0);
             CvInvoke.DestroyAllWindows();
@@ -100,24 +109,50 @@ namespace KodQR.bar
             CvInvoke.WaitKey(0);
         }
 
-        public void find()
+        public void find4()
         {
-            Mat image = this.img.Mat;
-
-            // Set maxFrq value
-            double maxFrq = 700; // Replace with your MaxFrq value
-
-            // Run the proposed algorithm
-            ProposedAlgorithm(image, maxFrq);
+            
 
         }
 
         public void ProposedAlgorithm(Mat image, double maxFrq)
         {
             CvInvoke.GaussianBlur(this.img, image, new Size(9, 9), 3.0);
+            CvInvoke.Laplacian(image, image, DepthType.Default);
 
             Mat structuringElement = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(21, 7), new System.Drawing.Point(-1, -1));
             CvInvoke.MorphologyEx(image, image, MorphOp.Blackhat, structuringElement, new Point(-1, -1), 1, BorderType.Default, new MCvScalar());
+
+            float[] histogramData = new float[256];
+            Mat histogramMat = new Mat();
+            VectorOfUMat vou = new VectorOfUMat();
+            vou.Push(image.GetUMat(AccessType.ReadWrite));
+            // Oblicz histogram
+            CvInvoke.CalcHist(
+                vou,        // Tablica obrazów
+                new int[] { 0 },                // Kanał (0 = skala szarości)
+                null,                           // Maska (null = cały obraz)
+                histogramMat,                   // Wynikowy histogram
+                new int[] { 256 },              // Liczba binów
+                new float[] { 0, 256 },         // Zakres intensywności pikseli
+                false                           // Nie normalizuj histogramu
+            );
+
+            // Skopiuj dane histogramu do tablicy
+            histogramData = histogramMat.GetData() as float[];
+
+            // Sprawdzenie, czy dane zostały poprawnie skopiowane
+            if (histogramData == null)
+                throw new InvalidOperationException("Nie można pobrać danych histogramu.");
+
+            // Znajdź maksymalną wartość i jej indeks
+            int maxIndex = Array.IndexOf(histogramData, histogramData.Max());
+            float maxValue = histogramData[maxIndex];
+
+            // Wyświetl wyniki
+            Console.WriteLine($"Najczęstsza wartość pikseli: {maxIndex}");
+            Console.WriteLine($"Częstotliwość: {maxValue}");
+            /*
             CvInvoke.Threshold(image, image, 0, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
             Mat labels = new Mat();
@@ -128,8 +163,9 @@ namespace KodQR.bar
             var statsData = stats.GetData();
             int totalArea = image.Rows * image.Cols;
 
+            */
             Mat output = new Mat();
-            labels.ConvertTo(output, DepthType.Cv8U);
+            image.ConvertTo(output, DepthType.Cv8U);
             CvInvoke.Normalize(output, output, 0, 255, NormType.MinMax);
             CvInvoke.Imshow("XDD1", output);
             CvInvoke.WaitKey(0);
