@@ -46,11 +46,12 @@ public class QRCodeReader
         //KODY BAR
         //-------------------------------------------------------------------
         //string filePath = "kodyBarZdjecia//bar2_1.jpg";
-        //string filePath = "kodyBarZdjecia//bar2_2.jpg";
+        string filePath = "kodyBarZdjecia//bar2_2.jpg";
         //string filePath = "kodyBarZdjecia//bar2_3.jpg";
         //string filePath = "kodyBarZdjecia//bar2_4.jpg";
         //string filePath = "kodyBarZdjecia//bar2_5.jpg";
-        string filePath = "kodyBarZdjecia//bar2_6.jpg";
+        //string filePath = "kodyBarZdjecia//bar2_6.jpg";
+        //string filePath = "kodyBarZdjecia//bar2_7.jpg";
         //-------------------------------------------------------------------
 
         //Image<Gray, Byte> img = Binarization.Binarize(filePath);
@@ -59,10 +60,7 @@ public class QRCodeReader
         //qr.qrDetect(img);
 
         Mat image = CvInvoke.Imread(filePath, ImreadModes.Color | ImreadModes.AnyDepth);
-        Mat grayImg = new Mat();
-        CvInvoke.CvtColor(image, grayImg, ColorConversion.Bgr2Gray);
-        Image<Gray, Byte> imag = grayImg.ToImage<Gray, Byte>();
-        barDetection bar = new barDetection(imag);
+        barDetection bar = new barDetection(image.ToImage<Bgr,Byte>());
         bar.detectBAR();
     }
 }

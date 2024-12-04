@@ -12,16 +12,16 @@ namespace KodQR.bar
 {
     public class barDetection
     {
-        public Image<Gray, Byte> img;
+        public Image<Bgr, Byte> img;
 
-        public barDetection(Image<Gray, byte> img)
+        public barDetection(Image<Bgr, byte> img)
         {
             this.img = img;
         }
 
         public void detectBAR()
         {
-            FindBar fBar = new FindBar(this.img);
+            FindBar fBar = new FindBar(this.img.Convert<Gray,Byte>(),this.img);
             fBar.find();
         }
     }
