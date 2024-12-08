@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -20,7 +21,28 @@ namespace KodQR.bar
 
         public FindBar(Image<Gray, Byte> im, Image<Bgr, Byte> im2) { this.img = im;this.img_color = im2; }
 
-        public void find()
+        static Mat CropRotatedRect(Mat inputImage, RotatedRect rotatedRect)
+        {
+            float sideLength = 200;
+            PointF[] sours = rotatedRect.GetVertices();
+            PointF[] destinationPoints = new PointF[] {
+                new PointF(0,0),
+                new PointF(sideLength,0),
+                new PointF(sideLength,sideLength),
+                new PointF(0,sideLength),
+            };
+
+            Mat perspectiveMatrix = CvInvoke.GetPerspectiveTransform(sours, destinationPoints);
+
+            // Przekształć obraz
+            Mat outputImage = new Mat();
+            CvInvoke.WarpPerspective(inputImage, outputImage, perspectiveMatrix, new Size((int)sideLength, (int)sideLength),Inter.Cubic);
+
+
+            return outputImage;
+        }
+
+        public List<Image<Gray, Byte>> find()
         {
             Image<Bgr, Byte> im = this.img.Convert<Bgr, Byte>();
             Mat gray = this.img.Mat;
@@ -37,18 +59,18 @@ namespace KodQR.bar
             CvInvoke.ConvertScaleAbs(gradient, absGradient, 1.0, 1.0);
 
             Mat blurred = new Mat();
-            CvInvoke.Blur(absGradient, blurred, new Size(9, 9), new Point(-1, -1));
+            CvInvoke.Blur(absGradient, blurred, new Size(10, 10), new Point(-1, -1));
 
             Mat thresh = new Mat();
             CvInvoke.Threshold(blurred, thresh, 128, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
-            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(14, 2), new Point(-1, -1));
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Cross, new System.Drawing.Size(21,7), new Point(-1, -1));
 
             Mat closed = new Mat();
-            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 2, BorderType.Replicate, new MCvScalar(0));
+            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Default, new MCvScalar(0));
 
-            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 15, BorderType.Default, new MCvScalar(0));
-            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),15, BorderType.Default, new MCvScalar(0));
+            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 4, BorderType.Default, new MCvScalar(0));
+            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),4, BorderType.Default, new MCvScalar(0));
 
             //Image<Bgr, byte> xd = closed.ToImage<Bgr, Byte>();
             Image<Bgr, byte> xd = this.img.Convert<Bgr, Byte>();
@@ -90,13 +112,15 @@ namespace KodQR.bar
                     using (VectorOfVectorOfPoint contoursToDraw1 = new VectorOfVectorOfPoint())
                     {
                         contoursToDraw1.Push(new VectorOfPoint(box));
+                        //Console.WriteLine($"vec:{contoursToDraw1[0].Size}");
                         conturs.Add(rect);
                         CvInvoke.DrawContours(xd, contoursToDraw1, -1, new MCvScalar(0, 255, 0), 2);
                     }
                 }
             }
 
-            Console.WriteLine($"Narysowane kontury");
+            //Console.WriteLine($"Narysowane kontury");
+            /*
             foreach (var contur in conturs)
             {
                 PointF[] punkty = contur.GetVertices();
@@ -109,76 +133,69 @@ namespace KodQR.bar
                 }
                 Console.WriteLine();
             }
+            */
+           // CvInvoke.Resize(xd, xd, new Size(500, 500));
+            //CvInvoke.Imshow("xddd", xd);
+            //CvInvoke.WaitKey(0);
+            //CvInvoke.DestroyAllWindows();
 
-            CvInvoke.Resize(xd, xd, new Size(500, 500));
-            CvInvoke.Imshow("xddd", xd);
-            CvInvoke.WaitKey(0);
-            CvInvoke.DestroyAllWindows();
+            List<Image<Gray,Byte>> image_list = new List<Image<Gray,Byte>>();
 
-            barBinarization binrize = new barBinarization(this.img_color);
-            binrize.barBinarize();
             foreach (var contur in conturs)
             {
-                PointF[] vertices = contur.GetVertices();
 
-                PointF[] srcPoints = vertices;
-                PointF[] destPoints = new PointF[4];
+                Mat dstImage = CropRotatedRect(this.img_color.Mat, contur);
 
-                destPoints[0] = new PointF(0, 0);
-                destPoints[1] = new PointF((int)contur.Size.Width, 0);
-                destPoints[2] = new PointF((int)contur.Size.Width, (int)contur.Size.Height);
-                destPoints[3] = new PointF(0, (int)contur.Size.Height);
+                //CvInvoke.Imshow("ehh", dstImage);
+                //CvInvoke.WaitKey(0);
 
-                Mat perspectiveMatrix = CvInvoke.GetPerspectiveTransform(srcPoints, destPoints);
+                barBinarization binrize = new barBinarization(dstImage.ToImage<Bgr,Byte>());
+                binrize.barBinarize();
 
-                Image<Gray, byte> dstImage = new Image<Gray, byte>((int)contur.Size.Width, (int)contur.Size.Height);
-                Size newSize = new Size((int)contur.Size.Width, (int)contur.Size.Height);
-                CvInvoke.WarpPerspective(this.img_color, dstImage, perspectiveMatrix, newSize, Inter.Linear, Warp.Default, BorderType.Default, new MCvScalar(0, 0, 0));
-
-                //CvInvoke.Resize(dstImage, dstImage, new Size(500, 500));
-                CvInvoke.Imshow("Cropped Image", dstImage);
-                CvInvoke.WaitKey(0);
+                image_list.Add(findBetter(binrize.img_binarry));
             }
+
+            return image_list;
         }
 
        
 
-        public void findBetter(Image<Gray,Byte> im)
+        public Image<Gray,Byte> findBetter(Image<Gray,Byte> img)
         {
-            int width = this.img.Width;
-            int height = this.img.Height;
+            int width = img.Width;
+            int height = img.Height;
             int[,] networkTable = new int[height, width];
-            Console.WriteLine($"color:{this.img.Data[0, 0, 0]}");
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    networkTable[y, x] = (this.img.Data[y,x,0] == 255) ? 0 : 1;
+                    networkTable[y, x] = (img.Data[y,x,0] == 255) ? 0 : 1;
                 }
             }
 
-            int sum_0 = GetSumOfOnes(networkTable);
-            Console.WriteLine($"SUM(0°): {sum_0}");
+            int sum_0 = GetSumOfOnes(networkTable,img);
+            //Console.WriteLine($"SUM(0°): {sum_0}");
 
-            float angle = 5;
+            float angle = 1;
             int maxSum = sum_0;
             int bestAngle = 0;
             // Obracanie sieci o różne kąty i obliczanie SUM(Φ)
-            for (int i = 1; i < 90; i++)
+            for (int i = 1; i <= 360; i++)
             {
                 // Obrót sieci o kąt (i * angle)
-                Image<Gray, byte> rotatedImage = RotateImage(this.img, (i * angle));
+                Image<Gray, byte> rotatedImage = RotateImage(img, (i * angle));
                 //CvInvoke.Imshow("xd", rotatedImage);
                 //CvInvoke.WaitKey(0);
                 // Zaktualizowanie tablicy sieciowej
                 int[,] rotatedNetworkTable = GetNetworkTableFromImage(rotatedImage);
 
                 // Obliczanie SUM(i * angle)
-                int sum = GetSumOfOnes(rotatedNetworkTable);
-                Console.WriteLine($"SUM({i * angle}°): {sum}");
+                int sum = GetSumOfOnes(rotatedNetworkTable,img);
+                //Console.WriteLine($"SUM({i * angle}°): {sum}");
 
                 // Sprawdzanie, czy uzyskano większą wartość SUM
-                if (sum > maxSum)
+                if (sum >= maxSum)
                 {
                     maxSum = sum;
                     bestAngle = (int)(i * angle);
@@ -186,40 +203,48 @@ namespace KodQR.bar
             }
 
             // Wyświetlenie najlepszej wartości i kąta obrotu
-            Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
-            Image<Gray, Byte> rotateed = RotateImage(this.img, bestAngle);
+            //Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
+            Image<Gray, Byte> rotateed = RotateImage(img, bestAngle);
 
-            CvInvoke.Imshow("Binarized Image", rotateed);
-            CvInvoke.WaitKey(0);
+            //CvInvoke.Imshow("Binarized Image", rotateed);
+            //CvInvoke.WaitKey(0);
+
+            return rotateed;
         }
 
-        int GetSumOfOnes(int[,] networkTable)
+        int GetSumOfOnes(int[,] networkTable,Image<Gray,Byte> img)
         {
-            int sum = 0;
-            int lenght1 = networkTable.GetLength(0);
-            int lenght2 = networkTable.GetLength(1);
-         
-            for(int i = lenght2/4; i < lenght2*3/4; i+= (lenght2 / 4))
+
+            int lenght_height = networkTable.GetLength(0);
+            int lenght_width = networkTable.GetLength(1);
+
+            
+            int y = lenght_height / 2;
+            List<int> x_final = new List<int>();
+
+            for (int j = lenght_width/4; j < lenght_width*3/4; j++)
             {
-                for(int j = lenght1/4; j < lenght1*3/4; j+=2)
+                if (networkTable[y,j] == 1)
                 {
-                    if (networkTable[j, i] == 1)
-                    {
-                        sum++;
-                    }
+                   x_final.Add(j); 
                 }
             }
 
-            for (int i = lenght2 / 4; i < lenght2 * 3 / 4; i += (lenght2 / 4))
-            {
-                for (int j = lenght1 / 4; j < lenght1 * 3 / 4; j += 2)
-                {
-                    if (networkTable[i, j] == 1)
-                    {
+            int sum = 0;
+            foreach (int x in x_final) {
+
+                for (int i = lenght_height / 4; i <= lenght_height*3/4; i++) {
+                    if (networkTable[i,x] == 1) {
                         sum++;
                     }
+                    else
+                    {
+                        break;
+                    }
                 }
+
             }
+            
 
             return sum;
         }
@@ -236,7 +261,6 @@ namespace KodQR.bar
             return rotatedImage;
         }
 
-        // Funkcja do konwersji obrazu binarnego na tablicę sieciową
         static int[,] GetNetworkTableFromImage(Image<Gray, byte> image)
         {
             int width = image.Width;
@@ -248,7 +272,7 @@ namespace KodQR.bar
             {
                 for (int x = 0; x < width; x++)
                 {
-                    networkTable[y, x] = (image.Data[y, x, 0] == 255) ? 0 : 1;
+                    networkTable[y, x] = (image.Data[y, x, 0] == 255) ? 1 : 0;
                 }
             }
             return networkTable;

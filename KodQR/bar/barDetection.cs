@@ -22,7 +22,29 @@ namespace KodQR.bar
         public void detectBAR()
         {
             FindBar fBar = new FindBar(this.img.Convert<Gray,Byte>(),this.img);
-            fBar.find();
+            List<Image<Gray, Byte>> barImages = fBar.find();
+
+            //CvInvoke.Imshow("orginalBar", this.img);
+            
+            int i = 1;
+            foreach(var img in barImages)
+            {
+                //CvInvoke.Imshow($"img: {i}", img);
+                projection p = new projection(img);
+                p.Image_projection();
+
+                if (p.barInTab!=null)
+                {
+                    CvInvoke.Imshow($"img1: {i}", img);
+                    CvInvoke.Imshow($"img2: {i}", p.imBar);
+                    Decoding dec = new Decoding(p.barInTab,p.imBar,p.y_f);
+                    dec.decode();
+                    CvInvoke.WaitKey(0);
+                }
+                i++;
+               
+            }
+            
         }
     }
 }

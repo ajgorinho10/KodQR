@@ -77,32 +77,41 @@ namespace KodQR.bar
             }
 
             // Znalezienie dwóch szczytów
-            int peak1 = -1, peak2 = -1;
+            float peak1 = -1, peak2 = -1;
+            int w1 = -1; int w2 = -1;
+            int ilosc_0 = 0;
             for (int i = 1; i < bins - 1; i++)
             {
-                if (GrayHist[i] > GrayHist[i - 1] && GrayHist[i] > GrayHist[i + 1])
+                //Console.WriteLine($"i:{i} w:{GrayHist[i]}");
+                if(i < 128)
                 {
-                    if (peak1 == -1 && peak1 < i)
+                    if(peak1 < GrayHist[i])
                     {
-                        peak1 = i;
+                        peak1 = GrayHist[i];
+                        w1 = i;
                     }
-                    else if (peak2 < i)
+                }
+                else if(i > 128)
+                {
+                    if (peak2 < GrayHist[i])
                     {
-                        peak2 = i;
+                        peak2 = GrayHist[i];
+                        w2 = i;
                     }
                 }
             }
 
             // Obliczenie wartości progowej
-            int threshold = (peak1 + peak2) / 2;
-            //Console.WriteLine($"Znaleziono szczyty w: {peak1} i {peak2}, próg: {threshold}");
+            int threshold = (w1 + w2) / 2;
+            //Console.WriteLine($"Znaleziono szczyty w: {w1} i {w2}, próg: {threshold}");
 
             // Wyświetlenie obrazu histogramu
             //CvInvoke.Imshow("Histogram", histImage);
             //CvInvoke.WaitKey(0);
 
             Mat binaryImage = new Mat();
-            CvInvoke.Threshold(GrayImg, binaryImage, threshold, 255, ThresholdType.Binary);
+            //CvInvoke.Threshold(GrayImg, binaryImage, threshold, 255, ThresholdType.Binary|ThresholdType.Otsu);
+            CvInvoke.AdaptiveThreshold(GrayImg, binaryImage, 255.0, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 21, 4.0);
 
             //CvInvoke.Resize(binaryImage, binaryImage, new Size(500, 500));
             //CvInvoke.Imshow("Binarized Image", binaryImage);
