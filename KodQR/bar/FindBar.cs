@@ -18,13 +18,27 @@ namespace KodQR.bar
     {
         public Image<Gray, Byte> img;
         public Image<Bgr, Byte> img_color;
+        public Image<Bgr, Byte> img_codes;
 
         public FindBar(Image<Gray, Byte> im, Image<Bgr, Byte> im2) { this.img = im;this.img_color = im2; }
 
+        public static float distance_me(PointF p1, PointF p2) {
+
+            double x = p1.X - p2.X;
+            double y = p1.Y - p2.Y;
+
+            x = x * x;
+            y = y * y;
+
+
+            return (float)Math.Sqrt(x+y);
+        }
+
         static Mat CropRotatedRect(Mat inputImage, RotatedRect rotatedRect)
         {
-            float sideLength = 200;
+            float sideLength = 500;
             PointF[] sours = rotatedRect.GetVertices();
+
             PointF[] destinationPoints = new PointF[] {
                 new PointF(0,0),
                 new PointF(sideLength,0),
@@ -59,18 +73,18 @@ namespace KodQR.bar
             CvInvoke.ConvertScaleAbs(gradient, absGradient, 1.0, 1.0);
 
             Mat blurred = new Mat();
-            CvInvoke.Blur(absGradient, blurred, new Size(10, 10), new Point(-1, -1));
+            CvInvoke.Blur(absGradient, blurred, new Size(9, 9), new Point(-1, -1));
 
             Mat thresh = new Mat();
             CvInvoke.Threshold(blurred, thresh, 128, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
-            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Cross, new System.Drawing.Size(21,7), new Point(-1, -1));
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(21,7), new Point(-1, -1));
 
             Mat closed = new Mat();
-            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Default, new MCvScalar(0));
+            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Constant, new MCvScalar(0));
 
-            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 4, BorderType.Default, new MCvScalar(0));
-            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),4, BorderType.Default, new MCvScalar(0));
+            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 6, BorderType.Constant, new MCvScalar(0));
+            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),6, BorderType.Constant, new MCvScalar(0));
 
             //Image<Bgr, byte> xd = closed.ToImage<Bgr, Byte>();
             Image<Bgr, byte> xd = this.img.Convert<Bgr, Byte>();
@@ -119,6 +133,8 @@ namespace KodQR.bar
                 }
             }
 
+            img_codes = xd;
+
             //Console.WriteLine($"Narysowane kontury");
             /*
             foreach (var contur in conturs)
@@ -134,7 +150,7 @@ namespace KodQR.bar
                 Console.WriteLine();
             }
             */
-           // CvInvoke.Resize(xd, xd, new Size(500, 500));
+            // CvInvoke.Resize(xd, xd, new Size(500, 500));
             //CvInvoke.Imshow("xddd", xd);
             //CvInvoke.WaitKey(0);
             //CvInvoke.DestroyAllWindows();
@@ -181,7 +197,7 @@ namespace KodQR.bar
             int maxSum = sum_0;
             int bestAngle = 0;
             // Obracanie sieci o różne kąty i obliczanie SUM(Φ)
-            for (int i = 1; i <= 360; i++)
+            for (int i = 1; i < 360; i++)
             {
                 // Obrót sieci o kąt (i * angle)
                 Image<Gray, byte> rotatedImage = RotateImage(img, (i * angle));
@@ -201,9 +217,10 @@ namespace KodQR.bar
                     bestAngle = (int)(i * angle);
                 }
             }
+            
 
             // Wyświetlenie najlepszej wartości i kąta obrotu
-            //Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
+            Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
             Image<Gray, Byte> rotateed = RotateImage(img, bestAngle);
 
             //CvInvoke.Imshow("Binarized Image", rotateed);
@@ -233,14 +250,15 @@ namespace KodQR.bar
             int sum = 0;
             foreach (int x in x_final) {
 
-                for (int i = lenght_height / 4; i <= lenght_height*3/4; i++) {
+                for (int i = lenght_height/ 4; i <= lenght_height*3/4; i++) {
                     if (networkTable[i,x] == 1) {
                         sum++;
                     }
                     else
-                    {
-                        break;
+                    { 
+                        break; 
                     }
+
                 }
 
             }
@@ -272,7 +290,7 @@ namespace KodQR.bar
             {
                 for (int x = 0; x < width; x++)
                 {
-                    networkTable[y, x] = (image.Data[y, x, 0] == 255) ? 1 : 0;
+                    networkTable[y, x] = (image.Data[y, x, 0] == 255) ? 0 : 1;
                 }
             }
             return networkTable;

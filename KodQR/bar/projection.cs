@@ -79,7 +79,7 @@ namespace KodQR.bar
 
 
             List<int> y = new List<int>();
-            for(int i = 0; i < ima.Height; i++)
+            for(int i = ima.Height/4; i < ima.Height*3/4; i++)
             {
                 int color1 = ima.Data[i, 0, 0];
                 int j = 0;
@@ -109,7 +109,7 @@ namespace KodQR.bar
 
                 
                 //Console.WriteLine($"changes:{changes}");
-                if(changes >=58)
+                if(changes >=58 && changes <= 62)
                 {
                     y.Add(i);
                 }
