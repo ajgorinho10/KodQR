@@ -110,8 +110,8 @@ namespace KodQR.bar
             //CvInvoke.WaitKey(0);
 
             Mat binaryImage = new Mat();
-            //CvInvoke.Threshold(GrayImg, binaryImage, threshold-30, 255, ThresholdType.Binary);
-            CvInvoke.AdaptiveThreshold(GrayImg, binaryImage, 255.0, AdaptiveThresholdType.GaussianC, ThresholdType.Binary, 41, 4.0);
+            //CvInvoke.Threshold(GrayImg, binaryImage, threshold, 255, ThresholdType.Binary|ThresholdType.Otsu);
+            CvInvoke.AdaptiveThreshold(GrayImg, binaryImage, 255.0, AdaptiveThresholdType.MeanC, ThresholdType.Binary, 71, 8.5);
 
             //CvInvoke.Resize(binaryImage, binaryImage, new Size(500, 500));
             //CvInvoke.Imshow("Binarized Image", binaryImage);

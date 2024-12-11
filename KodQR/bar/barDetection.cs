@@ -23,13 +23,9 @@ namespace KodQR.bar
         {
             int x = img.Width;
             int y = img.Height;
-            if(this.img.Width > 2000)
+            if(this.img.Width > 2000 || this.img.Height > 2000)
             {
                 x /= 2;
-            }
-
-            if(this.img.Height > 2000)
-            {
                 y /= 2;
             }
 
@@ -38,21 +34,21 @@ namespace KodQR.bar
             FindBar fBar = new FindBar(this.img.Convert<Gray,Byte>(),this.img);
             List<Image<Gray, Byte>> barImages = fBar.find();
 
-            CvInvoke.Resize(fBar.img_codes, fBar.img_codes, new Size(500, 500));
+            CvInvoke.Resize(fBar.img_codes, fBar.img_codes, new Size(800, 600));
             CvInvoke.Imshow("orginalBar", fBar.img_codes);
             CvInvoke.WaitKey(0);
             int i = 1;
             foreach(var img in barImages)
             {
-                CvInvoke.Imshow($"img: {i}", img);
-                CvInvoke.WaitKey(0);
+                //CvInvoke.Imshow($"img: {i}", img);
+                //CvInvoke.WaitKey(0);
                 projection p = new projection(img);
                 p.Image_projection();
 
                 if (p.barInTab != null)
                 {
                     CvInvoke.Imshow($"img1: {i}", img);
-                    CvInvoke.Imshow($"img2: {i}", p.imBar);
+                    //CvInvoke.Imshow($"img2: {i}", p.imBar);
                     Decoding dec = new Decoding(p.barInTab, p.imBar, p.y_f);
                     dec.decode();
                     CvInvoke.WaitKey(0);

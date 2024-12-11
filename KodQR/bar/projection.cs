@@ -95,7 +95,11 @@ namespace KodQR.bar
                 int changes = 0;
                 for(j=j; j< ima.Width-1; j++)
                 {
-                    if(color1 != ima.Data[i, j, 0])
+                    if (changes > 60)
+                    {
+                        break;
+                    }
+                        if (color1 != ima.Data[i, j, 0])
                     {
                         changes++;
                         color1 = ima.Data[i, j, 0];
@@ -105,11 +109,12 @@ namespace KodQR.bar
                     {
                         changes -= 1;
                     }
+                    
                 }
 
                 
                 //Console.WriteLine($"changes:{changes}");
-                if(changes >=58 && changes <= 62)
+                if(changes == 60)
                 {
                     y.Add(i);
                 }

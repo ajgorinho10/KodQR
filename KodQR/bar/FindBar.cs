@@ -36,21 +36,29 @@ namespace KodQR.bar
 
         static Mat CropRotatedRect(Mat inputImage, RotatedRect rotatedRect)
         {
-            float sideLength = 500;
+            float sideLength = 800;
+            float sideLength2 = 500;
             PointF[] sours = rotatedRect.GetVertices();
 
+            double[] dis = new double[3] {
+                distance_me(sours[0],sours[1]),
+                distance_me(sours[0],sours[2]),
+                distance_me(sours[0],sours[3]),
+            };
+            //sideLength = (float)dis.Max();
+            //sideLength2 = sideLength*5/8;
             PointF[] destinationPoints = new PointF[] {
                 new PointF(0,0),
                 new PointF(sideLength,0),
-                new PointF(sideLength,sideLength),
-                new PointF(0,sideLength),
+                new PointF(sideLength,sideLength2),
+                new PointF(0,sideLength2),
             };
 
             Mat perspectiveMatrix = CvInvoke.GetPerspectiveTransform(sours, destinationPoints);
 
             // Przekształć obraz
             Mat outputImage = new Mat();
-            CvInvoke.WarpPerspective(inputImage, outputImage, perspectiveMatrix, new Size((int)sideLength, (int)sideLength),Inter.Cubic);
+            CvInvoke.WarpPerspective(inputImage, outputImage, perspectiveMatrix, new Size((int)sideLength, (int)sideLength2),Inter.Area);
 
 
             return outputImage;
@@ -78,7 +86,7 @@ namespace KodQR.bar
             Mat thresh = new Mat();
             CvInvoke.Threshold(blurred, thresh, 128, 255, ThresholdType.Binary | ThresholdType.Otsu);
 
-            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new System.Drawing.Size(21,7), new Point(-1, -1));
+            Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Cross, new System.Drawing.Size(21,7), new Point(-1, -1));
 
             Mat closed = new Mat();
             CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Constant, new MCvScalar(0));
@@ -162,11 +170,11 @@ namespace KodQR.bar
 
                 Mat dstImage = CropRotatedRect(this.img_color.Mat, contur);
 
-                //CvInvoke.Imshow("ehh", dstImage);
-                //CvInvoke.WaitKey(0);
-
                 barBinarization binrize = new barBinarization(dstImage.ToImage<Bgr,Byte>());
                 binrize.barBinarize();
+
+                //CvInvoke.Imshow("ehh", binrize.img_binarry);
+                //CvInvoke.WaitKey(0);
 
                 image_list.Add(findBetter(binrize.img_binarry));
             }
@@ -197,7 +205,7 @@ namespace KodQR.bar
             int maxSum = sum_0;
             int bestAngle = 0;
             // Obracanie sieci o różne kąty i obliczanie SUM(Φ)
-            for (int i = 1; i < 360; i++)
+            for (int i = 1; i <= 90; i++)
             {
                 // Obrót sieci o kąt (i * angle)
                 Image<Gray, byte> rotatedImage = RotateImage(img, (i * angle));
@@ -217,7 +225,29 @@ namespace KodQR.bar
                     bestAngle = (int)(i * angle);
                 }
             }
-            
+
+            angle = -1;
+            for (int i = 1; i <= 90; i++)
+            {
+                // Obrót sieci o kąt (i * angle)
+                Image<Gray, byte> rotatedImage = RotateImage(img, (i * angle));
+                //CvInvoke.Imshow("xd", rotatedImage);
+                //CvInvoke.WaitKey(0);
+                // Zaktualizowanie tablicy sieciowej
+                int[,] rotatedNetworkTable = GetNetworkTableFromImage(rotatedImage);
+
+                // Obliczanie SUM(i * angle)
+                int sum = GetSumOfOnes(rotatedNetworkTable, img);
+                //Console.WriteLine($"SUM({i * angle}°): {sum}");
+
+                // Sprawdzanie, czy uzyskano większą wartość SUM
+                if (sum >= maxSum)
+                {
+                    maxSum = sum;
+                    bestAngle = (int)(i * angle);
+                }
+            }
+
 
             // Wyświetlenie najlepszej wartości i kąta obrotu
             Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
