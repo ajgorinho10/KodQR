@@ -28,7 +28,10 @@ namespace KodQR.bar
 
         public void decode()
         {
+            //CvInvoke.Imshow("praca", this.img);
             Image<Bgr, Byte> ima = this.img.Convert<Bgr, Byte>();
+            //CvInvoke.Imshow("test", ima);
+            //CvInvoke.WaitKey(0);
             Image<Bgr, Byte> ima2 = this.img.Convert<Bgr, Byte>();
             CvInvoke.Line(ima, new System.Drawing.Point(0, y_f), new System.Drawing.Point(ima.Width, y_f), new MCvScalar(255, 0, 0));
 
@@ -59,34 +62,46 @@ namespace KodQR.bar
                 }
             }
 
-            double d = (d2 - d1) / 95.0;
             //d = Math.Round(d);
             double dend = m_points[m_points.Count - 1].X - m_points[m_points.Count - 2].X;
-            double z0 = d1 + (dend / 2) * d;
-            Console.WriteLine($"d1:{d1} d2:{m_points[m_points.Count - 2].X} d3:{m_points[m_points.Count - 1].X}");
-            Console.WriteLine($"modul_size:{d}");
-            Console.WriteLine($"start:{z0}");
+            //Console.WriteLine($"d1:{d1} d2:{m_points[m_points.Count - 2].X} d3:{m_points[m_points.Count - 1].X}");
+            //Console.WriteLine($"modul_size:{d}");
+            //Console.WriteLine($"start:{z0}");
 
             string binarry = "";
+            double d = (m_points[3].X - m_points[0].X)/3.0;
+            double dz = (m_points[m_points.Count-1].X - m_points[m_points.Count-4].X)/3.0;
+            double dz2 = (m_points[31].X - m_points[28].X)/3.0;
+
+            d = (d + dz +dz2) / 3.0;
+            //double d = (d2-d1)/95.0;
+
             List<double> distance_list = new List<double>();
+            
             for (int i = 0; i < m_points.Count - 1; i++)
             {
                 double dis = distance(m_points[i], m_points[i + 1]);
                 int x = (int)(m_points[i].X + m_points[i + 1].X) / 2;
                 int color = this.img.Data[y_f, x, 0] == 255 ? 0 : 1;
                 double ilosc = dis / d;
-                ilosc = Math.Round(ilosc);
-                
-                if (ilosc == 0) { ilosc++; }
+                //ilosc = Math.Round(ilosc);
+                if(ilosc %((int)ilosc) > 0.63)
+                {
+                    ilosc++;
+                }
+
+                if ((int)ilosc == 0) { ilosc++; }
 
                 Console.WriteLine($"ilosc:{ilosc} kolor:{color}");
-                //if (binarry == "" && color == 0) { continue; }
+                if (binarry == "" && color == 0) { continue; }
                 char c = color == 1 ? '1' : '0';
                 binarry += new string(c,((int)ilosc));
 
                 CvInvoke.Circle(ima, new System.Drawing.Point(x, y_f), 3, new MCvScalar(0, 255, 0), -1);
                 distance_list.Add(dis);
             }
+            
+
 
             Console.WriteLine(binarry.Count()+" "+binarry);
             if(TabToString(binarry) == 0)

@@ -47,14 +47,16 @@ public class QRCodeReader
         //-------------------------------------------------------------------
         //string filePath = "kodyBarZdjecia//bar2_1.jpg"; //-1
         //string filePath = "kodyBarZdjecia//bar2_2.jpg"; //-1
-        string filePath = "kodyBarZdjecia//bar2_3.jpg";
-        //string filePath = "kodyBarZdjecia//bar2_4.jpg"; // -1
+        //string filePath = "kodyBarZdjecia//bar2_3.jpg";
+        //string filePath = "kodyBarZdjecia//bar2_4.jpg"; 
         //string filePath = "kodyBarZdjecia//bar2_5.jpg";
-        //string filePath = "kodyBarZdjecia//bar2_6.jpg"; //-1
+        //string filePath = "kodyBarZdjecia//bar2_6.jpg"; 
         //string filePath = "kodyBarZdjecia//bar2_7.jpg";
         //string filePath = "kodyBarZdjecia//bar2_8.jpg";
-        //string filePath = "kodyBarZdjecia//bar2_9.jpg";
+        //string filePath = "kodyBarZdjecia//bar2_9.jpg"; // -1
         //-------------------------------------------------------------------
+
+        string filePath = "kodyBarZdjecia//qr_bar.jpg";
 
         //Image<Gray, Byte> img = Binarization.Binarize(filePath);
 

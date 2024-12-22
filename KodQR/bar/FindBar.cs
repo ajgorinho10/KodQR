@@ -36,8 +36,8 @@ namespace KodQR.bar
 
         static Mat CropRotatedRect(Mat inputImage, RotatedRect rotatedRect)
         {
-            float sideLength = 800;
-            float sideLength2 = 500;
+            float sideLength = 1195;
+            float sideLength2 = 650;
             PointF[] sours = rotatedRect.GetVertices();
 
             double[] dis = new double[3] {
@@ -45,8 +45,12 @@ namespace KodQR.bar
                 distance_me(sours[0],sours[2]),
                 distance_me(sours[0],sours[3]),
             };
-            //sideLength = (float)dis.Max();
-            //sideLength2 = sideLength*5/8;
+
+            if (inputImage.Height < sideLength2) {
+                sideLength = 600;
+                sideLength2 = 600;
+            }
+
             PointF[] destinationPoints = new PointF[] {
                 new PointF(0,0),
                 new PointF(sideLength,0),
@@ -58,8 +62,8 @@ namespace KodQR.bar
 
             // Przekształć obraz
             Mat outputImage = new Mat();
-            CvInvoke.WarpPerspective(inputImage, outputImage, perspectiveMatrix, new Size((int)sideLength, (int)sideLength2),Inter.Area);
-
+            CvInvoke.WarpPerspective(inputImage, outputImage, perspectiveMatrix, new Size((int)sideLength, (int)sideLength2),Inter.Linear);
+            //CvInvoke.MedianBlur(outputImage, outputImage,1);
 
             return outputImage;
         }
@@ -71,8 +75,8 @@ namespace KodQR.bar
 
             Mat gradX = new Mat();
             Mat gradY = new Mat();
-            CvInvoke.Sobel(gray, gradX, DepthType.Cv32F, 1, 0, -1);
-            CvInvoke.Sobel(gray, gradY, DepthType.Cv32F, 0, 1, -1);
+            CvInvoke.Sobel(gray, gradX, DepthType.Cv32F, 1, 0 ,-1);
+            CvInvoke.Sobel(gray, gradY, DepthType.Cv32F, 0, 1 ,-1);
 
             Mat gradient = new Mat();
             CvInvoke.Subtract(gradX, gradY, gradient);
@@ -89,10 +93,10 @@ namespace KodQR.bar
             Mat kernel = CvInvoke.GetStructuringElement(ElementShape.Cross, new System.Drawing.Size(21,7), new Point(-1, -1));
 
             Mat closed = new Mat();
-            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Constant, new MCvScalar(0));
+            CvInvoke.MorphologyEx(thresh, closed, MorphOp.Close, kernel, new Point(-1, -1), 1 ,BorderType.Constant, new MCvScalar(255));
 
-            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 6, BorderType.Constant, new MCvScalar(0));
-            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),6, BorderType.Constant, new MCvScalar(0));
+            CvInvoke.Erode(closed, closed, null, new Point(-1, -1), 6, BorderType.Constant, new MCvScalar(255));
+            CvInvoke.Dilate(closed, closed, null, new Point(-1, -1),6, BorderType.Constant, new MCvScalar(255));
 
             //Image<Bgr, byte> xd = closed.ToImage<Bgr, Byte>();
             Image<Bgr, byte> xd = this.img.Convert<Bgr, Byte>();
@@ -250,7 +254,7 @@ namespace KodQR.bar
 
 
             // Wyświetlenie najlepszej wartości i kąta obrotu
-            Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
+            //Console.WriteLine($"Najlepszy kąt obrotu: {bestAngle}° z wartością SUM(MAX): {maxSum}");
             Image<Gray, Byte> rotateed = RotateImage(img, bestAngle);
 
             //CvInvoke.Imshow("Binarized Image", rotateed);

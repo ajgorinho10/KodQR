@@ -30,6 +30,7 @@ namespace KodQR.bar
             }
 
             CvInvoke.Resize(this.img, this.img, new Size(x, y));
+            //CvInvoke.GaussianBlur(this.img, this.img, new Size(1, 1), 2.0);
 
             FindBar fBar = new FindBar(this.img.Convert<Gray,Byte>(),this.img);
             List<Image<Gray, Byte>> barImages = fBar.find();
@@ -47,7 +48,7 @@ namespace KodQR.bar
 
                 if (p.barInTab != null)
                 {
-                    CvInvoke.Imshow($"img1: {i}", img);
+                    //CvInvoke.Imshow($"img1: {i}", img);
                     //CvInvoke.Imshow($"img2: {i}", p.imBar);
                     Decoding dec = new Decoding(p.barInTab, p.imBar, p.y_f);
                     dec.decode();

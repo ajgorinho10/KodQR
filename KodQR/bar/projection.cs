@@ -50,7 +50,7 @@ namespace KodQR.bar
             for(int i = 0; i < macierz.GetLength(1); i++)
             {
                 int s = 0;
-                for( int j=0;j < macierz.GetLength(0); j++)
+                for( int j= 0; j < macierz.GetLength(0); j++)
                 {
                     if (macierz[j, i] == 0)
                     {
@@ -64,7 +64,7 @@ namespace KodQR.bar
             for( int i = 0; i < sum.Length; i+= 1)
             {
 
-                CvInvoke.Line(im,new System.Drawing.Point(i, sum[i]) ,new System.Drawing.Point(i, 0),new MCvScalar(255,0,0));
+               CvInvoke.Line(im,new System.Drawing.Point(i, sum[i]) ,new System.Drawing.Point(i, 0),new MCvScalar(255,255,255));
             }
             //CvInvoke.Imshow("img", im);
             //CvInvoke.WaitKey(0);
@@ -79,7 +79,7 @@ namespace KodQR.bar
 
 
             List<int> y = new List<int>();
-            for(int i = ima.Height/4; i < ima.Height*3/4; i++)
+            for(int i = 0; i < ima.Height; i++)
             {
                 int color1 = ima.Data[i, 0, 0];
                 int j = 0;
@@ -130,7 +130,7 @@ namespace KodQR.bar
             if (y.Count > 0)
             {
                 CvInvoke.Line(im, new System.Drawing.Point(0, y[0]), new System.Drawing.Point(im.Width, y[0]), new MCvScalar(255, 0, 0));
-                CvInvoke.Line(im, new System.Drawing.Point(0, y[y.Count - 1]), new System.Drawing.Point(im.Width, y[y.Count - 1]), new MCvScalar(255, 0, 0));
+                CvInvoke.Line(im, new System.Drawing.Point(0, y[y.Count-1]), new System.Drawing.Point(im.Width, y[y.Count -1]), new MCvScalar(255, 0, 0));
 
                 int y_final = (y[0] + y[y.Count - 1]) / 2;
                 CvInvoke.Line(im, new System.Drawing.Point(0, y_final), new System.Drawing.Point(im.Width, y_final), new MCvScalar(255, 0, 0));
