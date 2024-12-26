@@ -7,24 +7,12 @@
       "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\qr\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\bar\\decoding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\bar\\decoding.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\bar\\findbar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\bar\\findbar.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\bar\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\bar\\projection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\bar\\barbinarization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\bar\\barbinarization.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\bar\\bardetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\bar\\bardetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|c:\\users\\kowal\\documents\\github\\kodqr\\kodqr\\qr\\qrdetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{695E6812-CB22-482C-B23E-EEB524C4F74B}|KodQR\\KodQR.csproj|solutionrelative:kodqr\\qr\\qrdetection.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,32 +22,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "barBinarization.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\barBinarization.cs",
-              "RelativeDocumentMoniker": "KodQR\\bar\\barBinarization.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\barBinarization.cs",
-              "RelativeToolTip": "KodQR\\bar\\barBinarization.cs",
-              "ViewState": "AgIAAEUAAAAAAAAAAAAowHEAAAB8AAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "qrDetection.cs",
+              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\qr\\qrDetection.cs",
+              "RelativeDocumentMoniker": "KodQR\\qr\\qrDetection.cs",
+              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\qr\\qrDetection.cs",
+              "RelativeToolTip": "KodQR\\qr\\qrDetection.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAB4AAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-11T17:19:30.423Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "projection.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\projection.cs",
-              "RelativeDocumentMoniker": "KodQR\\bar\\projection.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\projection.cs",
-              "RelativeToolTip": "KodQR\\bar\\projection.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAAAFMAAAAvAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-11T16:07:16.924Z",
+              "WhenOpened": "2024-12-26T15:47:35.751Z",
               "EditorCaption": ""
             },
             {
@@ -70,48 +45,22 @@
               "RelativeDocumentMoniker": "KodQR\\qr\\Program.cs",
               "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\qr\\Program.cs",
               "RelativeToolTip": "KodQR\\qr\\Program.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAQwCsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwDwAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-19T06:48:32.752Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 1,
               "Title": "barDetection.cs",
               "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\barDetection.cs",
               "RelativeDocumentMoniker": "KodQR\\bar\\barDetection.cs",
               "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\barDetection.cs",
               "RelativeToolTip": "KodQR\\bar\\barDetection.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACcAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAQwBkAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-11T14:48:03.52Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Decoding.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\Decoding.cs",
-              "RelativeDocumentMoniker": "KodQR\\bar\\Decoding.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\Decoding.cs",
-              "RelativeToolTip": "KodQR\\bar\\Decoding.cs",
-              "ViewState": "AgIAADgAAAAAAAAAAAAwwFcAAAAtAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-11T14:48:07.931Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "FindBar.cs",
-              "DocumentMoniker": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\FindBar.cs",
-              "RelativeDocumentMoniker": "KodQR\\bar\\FindBar.cs",
-              "ToolTip": "C:\\Users\\kowal\\Documents\\GitHub\\KodQR\\KodQR\\bar\\FindBar.cs",
-              "RelativeToolTip": "KodQR\\bar\\FindBar.cs",
-              "ViewState": "AgIAACYAAAAAAAAAAAAwwEEAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-11T14:58:53.96Z",
               "EditorCaption": ""
             }
           ]

@@ -13,9 +13,9 @@ namespace KodQR.qr
     public class qrDetection
     {
 
-        public void qrDetect(Image<Gray, Byte> img)
+        public List<Tuple<Punkt, Punkt, Punkt, Punkt, String>> qrDetect(Image<Gray, Byte> img)
         {
-            DateTime startTime = DateTime.Now;
+            //DateTime startTime = DateTime.Now;
             FindPatterns findPatterns = new FindPatterns(img);
 
             List<Punkt> finderPatterns = findPatterns.FinderPatterns();
@@ -28,11 +28,12 @@ namespace KodQR.qr
             //Console.WriteLine($"Ilosc QRKodów(z QuietZone): {groupedQuiet.Count}");
 
 
-            DateTime endTime = DateTime.Now;
-            TimeSpan duration = endTime - startTime;
-            Console.WriteLine($"Czas wykonania: {duration.TotalMilliseconds} ms");
+            //DateTime endTime = DateTime.Now;
+            //TimeSpan duration = endTime - startTime;
+            //Console.WriteLine($"Czas wykonania: {duration.TotalMilliseconds} ms");
 
             //drawInfo(img, groupedQuiet, finderPatterns);
+            return groupedQuiet;
         }
 
         public static List<Tuple<Punkt, Punkt, Punkt, Punkt, String>> quietCheck(List<Tuple<Punkt, Punkt, Punkt>> grouped, Image<Gray, Byte> image)
@@ -107,11 +108,11 @@ namespace KodQR.qr
                 }
                 //CvInvoke.Imshow("Obraz z punktem", im);
                 //CvInvoke.WaitKey(0);
-                Console.WriteLine($"ilosc:{ilosc} sukces:{sukces}");
+                //Console.WriteLine($"ilosc:{ilosc} sukces:{sukces}");
                 double sprawnosc = ((double)sukces / (double)ilosc) * 100;
-                Console.WriteLine($"Sprawnosc:{sprawnosc}%");
-                im.Save("perspektywa.png");
-                Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
+                //Console.WriteLine($"Sprawnosc:{sprawnosc}%");
+                //im.Save("perspektywa.png");
+                //Process.Start(new ProcessStartInfo("perspektywa.png") { UseShellExecute = true });
             }
 
             return new List<Tuple<Punkt, Punkt, Punkt, Punkt, String>>(final);

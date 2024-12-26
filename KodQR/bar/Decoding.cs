@@ -26,14 +26,14 @@ namespace KodQR.bar
             return Math.Sqrt(x + y);
         }
 
-        public void decode()
+        public String decode()
         {
             //CvInvoke.Imshow("praca", this.img);
             Image<Bgr, Byte> ima = this.img.Convert<Bgr, Byte>();
             //CvInvoke.Imshow("test", ima);
             //CvInvoke.WaitKey(0);
             Image<Bgr, Byte> ima2 = this.img.Convert<Bgr, Byte>();
-            CvInvoke.Line(ima, new System.Drawing.Point(0, y_f), new System.Drawing.Point(ima.Width, y_f), new MCvScalar(255, 0, 0));
+            //CvInvoke.Line(ima, new System.Drawing.Point(0, y_f), new System.Drawing.Point(ima.Width, y_f), new MCvScalar(255, 0, 0));
 
 
             int w1 = 0;
@@ -92,28 +92,37 @@ namespace KodQR.bar
 
                 if ((int)ilosc == 0) { ilosc++; }
 
-                Console.WriteLine($"ilosc:{ilosc} kolor:{color}");
+                //Console.WriteLine($"ilosc:{ilosc} kolor:{color}");
                 if (binarry == "" && color == 0) { continue; }
                 char c = color == 1 ? '1' : '0';
                 binarry += new string(c,((int)ilosc));
 
-                CvInvoke.Circle(ima, new System.Drawing.Point(x, y_f), 3, new MCvScalar(0, 255, 0), -1);
+                //CvInvoke.Circle(ima, new System.Drawing.Point(x, y_f), 3, new MCvScalar(0, 255, 0), -1);
                 distance_list.Add(dis);
             }
-            
 
 
-            Console.WriteLine(binarry.Count()+" "+binarry);
-            if(TabToString(binarry) == 0)
+            if(binarry.Count() < 43)
+            {
+                return "Brak";
+            }
+            //Console.WriteLine(binarry.Count()+" "+binarry);
+            String msg = TabToString(binarry);
+            if (msg == "Brak")
             {
                 string xd = new string(binarry.Reverse().ToArray());
-                TabToString(xd);
+                msg = TabToString(xd);
+                return msg;
+            }
+            else
+            {
+                return msg;
             }
 
-            CvInvoke.Imshow("ima", ima);
+            //CvInvoke.Imshow("ima", ima);
         }
 
-        public int TabToString(string binarry)
+        public String TabToString(string binarry)
         {
             string binaryCode = binarry;
 
@@ -166,8 +175,8 @@ namespace KodQR.bar
                 }
                 else
                 {
-                    Console.WriteLine("Błąd: Nieznany wzorzec binarny w lewej stronie!");
-                    return 0;
+                    //Console.WriteLine("Błąd: Nieznany wzorzec binarny w lewej stronie!");
+                    return "Brak";
                 }
 
             }
@@ -177,8 +186,8 @@ namespace KodQR.bar
 
             if (prefix == -1)
             {
-                Console.WriteLine("Błąd: Nie można ustalić prefiksu!");
-                return 0;
+                //Console.WriteLine("Błąd: Nie można ustalić prefiksu!");
+                return "Brak";
             }
 
             string[] rightCodes = SplitIntoGroups(rightPart, 7);
@@ -192,8 +201,8 @@ namespace KodQR.bar
                 }
                 else
                 {
-                    Console.WriteLine("Błąd: Nieznany wzorzec binarny w prawej stronie!");
-                    return 0;
+                    //Console.WriteLine("Błąd: Nieznany wzorzec binarny w prawej stronie!");
+                    return "Brak";
                 }
             }
 
@@ -201,8 +210,8 @@ namespace KodQR.bar
             fullCode.AddRange(leftDigits);
             fullCode.AddRange(rightDigits);
 
-            Console.WriteLine("Dekodowany kod EAN-13: " + string.Join("", fullCode));
-            return 1;
+            //Console.WriteLine("Dekodowany kod EAN-13: " + string.Join("", fullCode));
+            return string.Join("", fullCode);
         }
 
         static string[] SplitIntoGroups(string input, int groupSize)

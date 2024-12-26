@@ -147,26 +147,6 @@ namespace KodQR.bar
 
             img_codes = xd;
 
-            //Console.WriteLine($"Narysowane kontury");
-            /*
-            foreach (var contur in conturs)
-            {
-                PointF[] punkty = contur.GetVertices();
-
-                int i = 1;
-                foreach (var punkt in punkty)
-                {
-                    Console.WriteLine($"i:{i} x:{punkt.X} y:{punkt.Y}");
-                    i++;
-                }
-                Console.WriteLine();
-            }
-            */
-            // CvInvoke.Resize(xd, xd, new Size(500, 500));
-            //CvInvoke.Imshow("xddd", xd);
-            //CvInvoke.WaitKey(0);
-            //CvInvoke.DestroyAllWindows();
-
             List<Image<Gray,Byte>> image_list = new List<Image<Gray,Byte>>();
 
             foreach (var contur in conturs)

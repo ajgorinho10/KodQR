@@ -8,6 +8,8 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using KodQR.qr;
 using KodQR.bar;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class QRCodeReader
 {
@@ -58,13 +60,54 @@ public class QRCodeReader
 
         string filePath = "kodyBarZdjecia//qr_bar.jpg";
 
-        //Image<Gray, Byte> img = Binarization.Binarize(filePath);
+        DateTime startTime = DateTime.Now;
 
-        //qrDetection qr = new qrDetection();
-        //qr.qrDetect(img);
+        Detection(filePath);
 
-        Mat image = CvInvoke.Imread(filePath, ImreadModes.Color | ImreadModes.AnyDepth);
-        barDetection bar = new barDetection(image.ToImage<Bgr,Byte>());
-        bar.detectBAR();
+        DateTime endTime = DateTime.Now;
+        TimeSpan duration = endTime - startTime;
+        Console.WriteLine($"Czas wykonania: {duration.TotalMilliseconds} ms");
+    }
+
+    public static void Detection(string filePath)
+    {
+        void QR()
+        {
+            Image<Gray, Byte> img = Binarization.Binarize(filePath);
+            qrDetection qr = new qrDetection();
+            List<Tuple<Punkt, Punkt, Punkt, Punkt, String>> qr_info = qr.qrDetect(img);
+
+            foreach (var q in qr_info)
+            {
+                if(q.Item5 == "")
+                {
+                    continue;
+                }
+                Console.WriteLine("QR:" + q.Item5);
+            }
+        }
+
+        void BAR()
+        {
+            Mat image = CvInvoke.Imread(filePath, ImreadModes.Color | ImreadModes.AnyDepth);
+            barDetection bar = new barDetection(image.ToImage<Bgr, Byte>());
+            List<String> bar_info = bar.detectBAR();
+
+            foreach (var q in bar_info)
+            {
+                Console.WriteLine("EAN-13:" + q);
+            }
+        }
+
+        Thread thread_qr = new Thread(new ThreadStart(QR));
+        thread_qr.Name = "QR";
+        thread_qr.Start();       
+
+        Thread thread_bar = new Thread(new ThreadStart(BAR));
+        thread_bar.Name = "BAR";
+        thread_bar.Start();
+
+        thread_qr.Join();
+        thread_bar.Join();
     }
 }

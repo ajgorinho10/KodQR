@@ -19,7 +19,7 @@ namespace KodQR.bar
             this.img = img;
         }
 
-        public void detectBAR()
+        public List<String> detectBAR()
         {
             int x = img.Width;
             int y = img.Height;
@@ -27,18 +27,21 @@ namespace KodQR.bar
             {
                 x /= 2;
                 y /= 2;
+                CvInvoke.Resize(this.img, this.img, new Size(x, y));
+                //Console.WriteLine("ok");
             }
 
-            CvInvoke.Resize(this.img, this.img, new Size(x, y));
+            
             //CvInvoke.GaussianBlur(this.img, this.img, new Size(1, 1), 2.0);
 
             FindBar fBar = new FindBar(this.img.Convert<Gray,Byte>(),this.img);
             List<Image<Gray, Byte>> barImages = fBar.find();
 
             CvInvoke.Resize(fBar.img_codes, fBar.img_codes, new Size(800, 600));
-            CvInvoke.Imshow("orginalBar", fBar.img_codes);
-            CvInvoke.WaitKey(0);
+            //CvInvoke.Imshow("orginalBar", fBar.img_codes);
+            //CvInvoke.WaitKey(0);
             int i = 1;
+            List<String> msg = new List<String>();
             foreach(var img in barImages)
             {
                 //CvInvoke.Imshow($"img: {i}", img);
@@ -51,13 +54,18 @@ namespace KodQR.bar
                     //CvInvoke.Imshow($"img1: {i}", img);
                     //CvInvoke.Imshow($"img2: {i}", p.imBar);
                     Decoding dec = new Decoding(p.barInTab, p.imBar, p.y_f);
-                    dec.decode();
+                    String odp = dec.decode();
+                    if(odp != "Brak")
+                    {
+                        msg.Add(odp);
+                    }
                     CvInvoke.WaitKey(0);
                 }
                 i++;
                
             }
-            
+
+            return msg;
         }
     }
 }
